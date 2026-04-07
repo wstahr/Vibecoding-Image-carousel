@@ -279,8 +279,9 @@
   // ── Load conversation list ──
   function loadConversations() {
     if (unsubConvs) unsubConvs();
+    // Use a simpler query without ordering to avoid index issues on first load
     unsubConvs = onSnapshot(
-      query(collection(db, 'users', me.uid, 'conversations'), orderBy('lastAt', 'desc')),
+      collection(db, 'users', me.uid, 'conversations'),
       snap => {
         // Remove old conv items (keep no-convs div)
         convList.querySelectorAll('.conv-item').forEach(el => el.remove());
@@ -342,24 +343,24 @@
     chatWindow.classList.add('visible');
     messagesList.innerHTML = '';
 
-    // Ensure the top-level conversations doc exists (required for subcollection writes)
+    // Create/update the shared conversation doc (readable by both participants)
+    // This is the single source of truth — no writes to the other user's doc
     const convDocRef = doc(db, 'conversations', activeConvId);
     await setDoc(convDocRef, {
       participants: [me.uid, targetUid],
-      createdAt: serverTimestamp()
+      names: { [me.uid]: myName, [targetUid]: targetName || 'Unknown' },
+      avatars: { [me.uid]: me.photoURL || '', [targetUid]: targetAvatar || '' },
+      lastAt: serverTimestamp()
     }, { merge: true });
 
-    // Ensure conversation metadata exists on both sides with lastAt so ordering works
-    const now = serverTimestamp();
-    const myConvRef    = doc(db, 'users', me.uid,   'conversations', activeConvId);
-    const theirConvRef = doc(db, 'users', targetUid, 'conversations', activeConvId);
+    // Write only to MY conversations list
+    const myConvRef = doc(db, 'users', me.uid, 'conversations', activeConvId);
     await setDoc(myConvRef, {
-      withUid: targetUid, withName: targetName || 'Unknown',
-      withAvatar: targetAvatar || '', unread: false, lastAt: now
-    }, { merge: true });
-    await setDoc(theirConvRef, {
-      withUid: me.uid, withName: myName,
-      withAvatar: me.photoURL || '', lastAt: now
+      withUid: targetUid,
+      withName: targetName || 'Unknown',
+      withAvatar: targetAvatar || '',
+      unread: false,
+      lastAt: serverTimestamp()
     }, { merge: true });
 
     // Listen to messages in real time
@@ -385,12 +386,11 @@
         });
         messagesList.scrollTop = messagesList.scrollHeight;
       },
-      err => console.error('Messages listener error:', err)
+      err => console.error('Messages listener error:', err.message)
     );
 
     msgInput.focus();
 
-    // Highlight active conv in list
     convList.querySelectorAll('.conv-item').forEach(el => {
       el.classList.toggle('active', el.dataset.uid === targetUid);
     });
@@ -404,7 +404,9 @@
     msgInput.value = '';
 
     try {
-      // Write the message
+      const preview = text.length > 40 ? text.slice(0, 40) + '…' : text;
+
+      // Write the message to the shared conversation
       await addDoc(collection(db, 'conversations', activeConvId, 'messages'), {
         text,
         senderUid:  me.uid,
@@ -412,22 +414,22 @@
         createdAt:  serverTimestamp()
       });
 
-      // Update preview on both sides
-      const myConvRef  = doc(db, 'users', me.uid, 'conversations', activeConvId);
-      const myConvSnap = await getDoc(myConvRef);
-      const theirUid   = myConvSnap.exists() ? myConvSnap.data().withUid : null;
-      const preview    = text.length > 40 ? text.slice(0, 40) + '…' : text;
-      const ts         = serverTimestamp();
+      // Update the shared conv doc (both can read this)
+      await setDoc(doc(db, 'conversations', activeConvId), {
+        lastMsg: preview,
+        lastAt: serverTimestamp(),
+        lastSenderUid: me.uid
+      }, { merge: true });
 
-      await setDoc(myConvRef, { lastMsg: preview, lastAt: ts, unread: false }, { merge: true });
+      // Update only MY conversations list entry
+      await setDoc(doc(db, 'users', me.uid, 'conversations', activeConvId), {
+        lastMsg: preview,
+        lastAt: serverTimestamp(),
+        unread: false
+      }, { merge: true });
 
-      if (theirUid) {
-        const theirConvRef = doc(db, 'users', theirUid, 'conversations', activeConvId);
-        await setDoc(theirConvRef, { lastMsg: preview, lastAt: ts, unread: true }, { merge: true });
-      }
     } catch(err) {
       console.error('Send error:', err);
-      alert('Failed to send: ' + err.message);
     }
   }
 
