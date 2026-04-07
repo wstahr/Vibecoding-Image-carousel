@@ -18,6 +18,10 @@
       --muted: #5a5550;
       --accent: #c8a96e;
       --accent-dim: rgba(200,169,110,0.15);
+      --danger: rgba(180,60,60,0.8);
+      --panel-w: 360px;
+      --panel-collapsed-w: 42px;
+      --topbar-h: 52px;
     }
 
     html { scroll-behavior: smooth; }
@@ -32,419 +36,307 @@
       flex-direction: column;
     }
 
-    /* Upload drawer */
+    /* ── Upload drawer ── */
     #upload-drawer {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       transform: translateY(-100%);
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      background: var(--surface); border-bottom: 1px solid var(--border);
       padding: 2rem 2.5rem;
     }
-
     #upload-drawer.open { transform: translateY(0); }
-
-    .drawer-inner {
-      max-width: 700px;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
+    .drawer-inner { max-width: 700px; display: flex; flex-direction: column; gap: 1rem; }
     .drawer-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      font-weight: 300;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.25rem;
+      font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 300;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.25rem;
     }
-
-    .drawer-row {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
+    .drawer-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
     .field {
-      font-family: 'Instrument Mono', monospace;
-      font-size: 0.75rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.55rem 0.9rem;
-      outline: none;
-      transition: border-color 0.2s;
-      flex: 1;
-      min-width: 140px;
+      font-family: 'Instrument Mono', monospace; font-size: 0.75rem;
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 0.55rem 0.9rem; outline: none; transition: border-color 0.2s; flex: 1; min-width: 140px;
     }
-
     .field:focus { border-color: var(--accent); }
     .field::placeholder { color: var(--muted); }
-
     .file-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 0.55rem 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text); border: 1px solid var(--border);
+      padding: 0.55rem 1rem; cursor: pointer; transition: all 0.2s; white-space: nowrap;
     }
-
     .file-label:hover { border-color: var(--accent); color: var(--accent); }
     .file-label input { display: none; }
-
-    #file-name {
-      font-size: 0.68rem;
-      color: var(--muted);
-      font-style: italic;
-      flex: 1;
-      min-width: 100px;
-    }
-
+    #file-name { font-size: 0.68rem; color: var(--muted); font-style: italic; flex: 1; min-width: 100px; }
     .btn-upload {
-      font-family: 'Instrument Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      background: var(--accent);
-      color: var(--bg);
-      border: none;
-      padding: 0.6rem 1.6rem;
-      cursor: pointer;
-      font-weight: 600;
-      transition: opacity 0.2s;
-      white-space: nowrap;
+      font-family: 'Instrument Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      background: var(--accent); color: var(--bg); border: none;
+      padding: 0.6rem 1.6rem; cursor: pointer; font-weight: 600;
+      transition: opacity 0.2s; white-space: nowrap;
     }
-
     .btn-upload:hover { opacity: 0.85; }
     .btn-upload:disabled { opacity: 0.3; cursor: not-allowed; }
+    #progress { height: 1px; background: var(--accent); width: 0; transition: width 0.3s; }
 
-    #progress {
-      height: 1px;
-      background: var(--accent);
-      width: 0;
-      transition: width 0.3s;
-    }
-
-    /* Top nav */
+    /* ── Top nav ── */
     #topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: var(--topbar-h);
       border-bottom: 1px solid var(--border);
-      background: var(--bg);
-      flex-shrink: 0;
-      position: relative;
-      z-index: 50;
+      background: var(--bg); flex-shrink: 0; position: relative; z-index: 50;
     }
-
     .site-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.3rem;
-      font-weight: 300;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text);
+      font-family: 'Cormorant Garamond', serif; font-size: 1.3rem;
+      font-weight: 300; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text);
+    }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    #counter { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; }
+
+    /* Auth area */
+    #auth-area { display: flex; align-items: center; gap: 0.75rem; }
+
+    .user-chip {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em;
+    }
+    .user-chip img {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1px solid var(--border);
     }
 
-    .nav-right { display: flex; align-items: center; gap: 1.5rem; }
-
-    #counter {
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 0.1em;
+    .btn-auth {
+      font-family: 'Instrument Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.12em; text-transform: uppercase; background: transparent;
+      border: 1px solid rgba(200,169,110,0.3); padding: 0.4rem 1rem;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
     }
+    .btn-auth.signin { color: var(--accent); }
+    .btn-auth.signin:hover { background: var(--accent-dim); }
+    .btn-auth.signout { color: var(--muted); border-color: rgba(255,255,255,0.07); font-size: 0.6rem; }
+    .btn-auth.signout:hover { color: var(--text); border-color: var(--border); }
 
     .btn-toggle-upload {
-      font-family: 'Instrument Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid rgba(200,169,110,0.3);
-      padding: 0.4rem 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
+      font-family: 'Instrument Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.12em; text-transform: uppercase; background: transparent;
+      color: var(--accent); border: 1px solid rgba(200,169,110,0.3);
+      padding: 0.4rem 1rem; cursor: pointer; transition: all 0.2s;
     }
-
     .btn-toggle-upload:hover { background: var(--accent-dim); }
 
-    /* Feed */
-    #feed {
-      flex: 1;
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
-      scrollbar-width: none;
-    }
-
+    /* ── Feed ── */
+    #feed { flex: 1; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
     #feed::-webkit-scrollbar { display: none; }
 
-    /* Slide */
+    /* ── Slide ── */
     .slide {
-      height: calc(100dvh - 52px);
+      height: calc(100dvh - var(--topbar-h));
       scroll-snap-align: start;
       display: grid;
-      grid-template-columns: 1fr 360px;
+      grid-template-columns: 1fr var(--panel-w);
+      transition: grid-template-columns 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       animation: fadeIn 0.5s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* Image side */
-    .slide-image {
       position: relative;
-      overflow: hidden;
-      background: #050505;
     }
+    .slide.panel-collapsed { grid-template-columns: 1fr var(--panel-collapsed-w); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .slide-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 8s ease;
-    }
-
+    /* ── Image ── */
+    .slide-image { position: relative; overflow: hidden; background: #050505; }
+    .slide-image img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 8s ease; }
     .slide:hover .slide-image img { transform: scale(1.03); }
 
     .slide-meta {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
+      position: absolute; bottom: 0; left: 0; right: 0;
       padding: 3rem 2.5rem 2rem;
       background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
     }
-
     .slide-caption {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.8rem;
-      font-weight: 300;
-      font-style: italic;
-      line-height: 1.2;
-      color: #fff;
-      margin-bottom: 0.5rem;
+      font-family: 'Cormorant Garamond', serif; font-size: 1.8rem;
+      font-weight: 300; font-style: italic; line-height: 1.2; color: #fff; margin-bottom: 0.5rem;
     }
+    .slide-author { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+    .slide-date { font-size: 0.6rem; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; margin-top: 0.2rem; }
+    .slide-index { position: absolute; top: 1.5rem; left: 1.5rem; font-size: 0.6rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.25); }
 
-    .slide-author {
-      font-size: 0.65rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent);
+    /* Delete image button — only visible to owner */
+    .btn-delete-image {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.1); color: rgba(255,100,100,0.8);
+      font-family: 'Instrument Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.35rem 0.7rem; cursor: pointer; transition: all 0.2s;
+      display: none;
     }
-
-    .slide-date {
-      font-size: 0.6rem;
-      color: rgba(255,255,255,0.35);
-      letter-spacing: 0.08em;
-      margin-top: 0.2rem;
-    }
-
-    .slide-index {
-      position: absolute;
-      top: 1.5rem;
-      left: 1.5rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      color: rgba(255,255,255,0.25);
-    }
+    .btn-delete-image:hover { background: rgba(180,40,40,0.7); color: #fff; border-color: transparent; }
+    .btn-delete-image.visible { display: block; }
 
     .scroll-hint {
-      position: absolute;
-      bottom: 2rem;
-      right: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.3rem;
-      opacity: 0.3;
-      animation: bob 2s infinite;
+      position: absolute; bottom: 2rem; right: 2rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+      opacity: 0.3; animation: bob 2s infinite; pointer-events: none;
     }
+    .scroll-hint span { font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: white; }
+    @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 
-    .scroll-hint span {
-      font-size: 0.55rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: white;
-    }
-
-    @keyframes bob {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(5px); }
-    }
-
-    /* Comments panel */
+    /* ── Panel ── */
     .slide-panel {
-      border-left: 1px solid var(--border);
-      background: var(--panel);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      border-left: 1px solid var(--border); background: var(--panel);
+      display: flex; flex-direction: column; overflow: hidden; position: relative;
     }
+    .panel-body { display: flex; flex-direction: column; flex: 1; overflow: hidden; transition: opacity 0.2s; }
+    .slide.panel-collapsed .panel-body { opacity: 0; pointer-events: none; }
+
+    /* Panel toggle tab */
+    .panel-toggle {
+      position: absolute; top: 50%; left: 0;
+      transform: translate(-100%, -50%);
+      background: var(--panel); border: 1px solid var(--border); border-right: none;
+      color: var(--accent); cursor: pointer; padding: 0.75rem 0.4rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      transition: background 0.2s; border-radius: 4px 0 0 4px; z-index: 5;
+    }
+    .panel-toggle:hover { background: var(--surface); }
+    .toggle-arrow { transition: transform 0.35s ease; }
+    .slide.panel-collapsed .toggle-arrow { transform: rotate(180deg); }
+    .toggle-count {
+      font-size: 0.58rem; color: var(--accent); letter-spacing: 0.08em;
+      writing-mode: vertical-rl; opacity: 0; transition: opacity 0.2s;
+    }
+    .slide.panel-collapsed .toggle-count { opacity: 1; }
 
     .panel-header {
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
     }
-
-    .panel-title {
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .comment-count {
-      font-size: 0.62rem;
-      color: var(--accent);
-      letter-spacing: 0.1em;
-    }
+    .panel-title { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+    .comment-count { font-size: 0.62rem; color: var(--accent); letter-spacing: 0.1em; }
 
     .comments-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border) transparent;
+      flex: 1; overflow-y: auto; padding: 1.25rem 1.5rem;
+      display: flex; flex-direction: column; gap: 1.25rem;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
     }
-
-    .comment-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      animation: commentIn 0.3s ease;
-    }
-
-    @keyframes commentIn {
-      from { opacity: 0; transform: translateX(6px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    .comment-header { display: flex; align-items: baseline; gap: 0.6rem; }
-
-    .comment-username {
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-
+    .comment-item { display: flex; flex-direction: column; gap: 0.3rem; animation: commentIn 0.3s ease; position: relative; }
+    @keyframes commentIn { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: translateX(0); } }
+    .comment-header { display: flex; align-items: center; gap: 0.6rem; }
+    .comment-avatar { width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--border); flex-shrink: 0; }
+    .comment-username { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); flex: 1; }
     .comment-time { font-size: 0.58rem; color: var(--muted); }
+    .comment-text { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; line-height: 1.55; color: rgba(232,228,220,0.8); padding-left: 26px; }
 
-    .comment-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.95rem;
-      line-height: 1.55;
-      color: rgba(232,228,220,0.8);
+    /* Delete comment button */
+    .btn-delete-comment {
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; font-size: 0.6rem; padding: 0.1rem 0.3rem;
+      transition: color 0.2s; line-height: 1; display: none;
     }
+    .btn-delete-comment:hover { color: rgba(255,100,100,0.8); }
+    .btn-delete-comment.visible { display: block; }
 
-    .no-comments {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 0.9rem;
-      color: var(--muted);
-      text-align: center;
-      padding: 2rem 0;
+    .no-comments { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--muted); text-align: center; padding: 2rem 0; }
+
+    /* Sign-in prompt inside panel */
+    .sign-in-prompt {
+      border-top: 1px solid var(--border); padding: 1rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
     }
+    .sign-in-prompt span { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; }
+    .sign-in-prompt button {
+      font-family: 'Instrument Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: transparent; color: var(--accent);
+      border: 1px solid rgba(200,169,110,0.3); padding: 0.4rem 0.9rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .sign-in-prompt button:hover { background: var(--accent-dim); }
 
     /* Comment form */
     .comment-form {
-      border-top: 1px solid var(--border);
-      padding: 1rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      flex-shrink: 0;
+      border-top: 1px solid var(--border); padding: 1rem 1.5rem;
+      display: flex; flex-direction: column; gap: 0.6rem; flex-shrink: 0;
     }
-
     .comment-form .field { width: 100%; }
-
-    .form-row { display: flex; gap: 0.5rem; }
-
+    .form-row { display: flex; gap: 0.5rem; align-items: center; }
+    .commenter-info { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.1rem; }
+    .commenter-info img { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border); }
+    .commenter-name { font-size: 0.65rem; color: var(--accent); letter-spacing: 0.08em; }
     .btn-post {
-      font-family: 'Instrument Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid rgba(200,169,110,0.3);
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
+      font-family: 'Instrument Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.12em; text-transform: uppercase; background: transparent;
+      color: var(--accent); border: 1px solid rgba(200,169,110,0.3);
+      padding: 0.5rem 1rem; cursor: pointer; transition: all 0.2s; white-space: nowrap;
     }
-
     .btn-post:hover { background: var(--accent-dim); }
 
-    /* Empty state */
+    /* ── Empty state ── */
     #empty-state {
-      height: calc(100dvh - 52px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      color: var(--muted);
+      height: calc(100dvh - var(--topbar-h));
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.75rem; color: var(--muted);
     }
+    #empty-state p:first-child { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-style: italic; font-weight: 300; color: rgba(232,228,220,0.15); }
+    #empty-state p:last-child { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; }
 
-    #empty-state p:first-child {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem;
-      font-style: italic;
-      font-weight: 300;
-      color: rgba(232,228,220,0.15);
-    }
-
-    #empty-state p:last-child {
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-    }
-
-    /* Toast */
+    /* ── Toast ── */
     #toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
+      position: fixed; bottom: 2rem; left: 50%;
       transform: translateX(-50%) translateY(16px);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.7rem 1.5rem;
-      opacity: 0;
-      transition: all 0.3s;
-      pointer-events: none;
-      z-index: 200;
-      white-space: nowrap;
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.7rem 1.5rem; opacity: 0; transition: all 0.3s;
+      pointer-events: none; z-index: 200; white-space: nowrap;
     }
-
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Confirm dialog ── */
+    #confirm-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    #confirm-overlay.show { opacity: 1; pointer-events: auto; }
+    #confirm-box {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 2rem; max-width: 320px; width: 90%; display: flex; flex-direction: column; gap: 1.25rem;
+    }
+    #confirm-box p { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--text); line-height: 1.5; }
+    .confirm-btns { display: flex; gap: 0.75rem; justify-content: flex-end; }
+    .confirm-btns button {
+      font-family: 'Instrument Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); padding: 0.5rem 1rem; cursor: pointer; transition: all 0.2s;
+    }
+    .confirm-btns button.danger { color: rgba(255,100,100,0.8); border-color: rgba(255,100,100,0.3); }
+    .confirm-btns button:hover { background: var(--panel); color: var(--text); }
+    .confirm-btns button.danger:hover { background: rgba(180,40,40,0.3); }
+
+    /* ══ MOBILE ══ */
+    @media (max-width: 768px) {
+      .slide { grid-template-columns: 1fr !important; grid-template-rows: 1fr; }
+      .slide-panel {
+        position: fixed; bottom: 0; left: 0; right: 0; height: 72dvh;
+        border-left: none; border-top: 1px solid var(--border);
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 30;
+      }
+      .slide-panel.mobile-open { transform: translateY(0); }
+      .panel-body { opacity: 1 !important; pointer-events: auto !important; }
+      .panel-toggle {
+        position: fixed; bottom: 1.25rem; right: 1.25rem; top: auto; left: auto;
+        transform: none; border: 1px solid rgba(255,255,255,0.12); border-radius: 999px;
+        padding: 0.55rem 0.9rem; flex-direction: row; gap: 0.4rem;
+        background: rgba(14,14,14,0.88); backdrop-filter: blur(10px); z-index: 35;
+      }
+      .toggle-count { writing-mode: horizontal-tb; opacity: 1 !important; font-size: 0.65rem; }
+      .toggle-arrow { transform: rotate(-90deg) !important; }
+      .panel-toggle.panel-open .toggle-arrow { transform: rotate(90deg) !important; }
+      .scroll-hint { right: 5.5rem; }
+      .nav-right { gap: 0.75rem; }
+      #counter { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -453,8 +345,10 @@
 <div id="upload-drawer">
   <div class="drawer-inner">
     <div class="drawer-title">New Post</div>
+    <div class="drawer-row" id="drawer-user-row">
+      <!-- Populated by JS once signed in -->
+    </div>
     <div class="drawer-row">
-      <input class="field" type="text" id="username-input" placeholder="Your name..." style="max-width:180px">
       <input class="field" type="text" id="caption-input" placeholder="Caption...">
     </div>
     <div class="drawer-row">
@@ -475,7 +369,11 @@
   <div class="site-title">Gallery</div>
   <div class="nav-right">
     <span id="counter"></span>
-    <button class="btn-toggle-upload" id="toggle-btn">+ Upload</button>
+    <div id="auth-area">
+      <!-- Populated by JS -->
+      <button class="btn-auth signin" id="signin-btn">Sign in with Google</button>
+    </div>
+    <button class="btn-toggle-upload" id="toggle-btn" style="display:none">+ Upload</button>
   </div>
 </div>
 
@@ -487,91 +385,168 @@
   </div>
 </div>
 
+<!-- Confirm dialog -->
+<div id="confirm-overlay">
+  <div id="confirm-box">
+    <p id="confirm-msg">Are you sure you want to delete this?</p>
+    <div class="confirm-btns">
+      <button id="confirm-cancel">Cancel</button>
+      <button class="danger" id="confirm-ok">Delete</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+                                   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp }
+                                   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // =============================================
-  // PASTE YOUR FIREBASE CONFIG HERE
-  // =============================================
-const firebaseConfig = {
-  apiKey: "AIzaSyDOIl7RcTMd5AdgumpQavT4gVU4KsaF_VM",
-  authDomain: "learnfirebase-b0766.firebaseapp.com",
-  projectId: "learnfirebase-b0766",
-  storageBucket: "learnfirebase-b0766.firebasestorage.app",
-  messagingSenderId: "109847382681",
-  appId: "1:109847382681:web:3719ac656afd60b8b84608",
-  measurementId: "G-ZT34MMR3H3"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyDOIl7RcTMd5AdgumpQavT4gVU4KsaF_VM",
+    authDomain: "learnfirebase-b0766.firebaseapp.com",
+    projectId: "learnfirebase-b0766",
+    storageBucket: "learnfirebase-b0766.firebasestorage.app",
+    messagingSenderId: "109847382681",
+    appId: "1:109847382681:web:3719ac656afd60b8b84608"
+  };
 
-  // =============================================
-  // CLOUDINARY CONFIG
-  // =============================================
-  const CLOUDINARY_CLOUD_NAME = "dzim2htst";      // e.g. "dxyz123abc"
-  const CLOUDINARY_UPLOAD_PRESET = "carousel"; // e.g. "ml_default" (must be Unsigned)
+  const CLOUDINARY_CLOUD_NAME    = "dzim2htst";
+  const CLOUDINARY_UPLOAD_PRESET = "carousel";
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
 
-  const fileInput     = document.getElementById('file-input');
-  const captionInput  = document.getElementById('caption-input');
-  const usernameInput = document.getElementById('username-input');
-  const uploadBtn     = document.getElementById('upload-btn');
-  const fileNameEl    = document.getElementById('file-name');
-  const progressEl    = document.getElementById('progress');
-  const feed          = document.getElementById('feed');
-  const emptyState    = document.getElementById('empty-state');
-  const counter       = document.getElementById('counter');
-  const drawer        = document.getElementById('upload-drawer');
-  const toggleBtn     = document.getElementById('toggle-btn');
+  // ── DOM refs ──
+  const fileInput      = document.getElementById('file-input');
+  const captionInput   = document.getElementById('caption-input');
+  const uploadBtn      = document.getElementById('upload-btn');
+  const fileNameEl     = document.getElementById('file-name');
+  const progressEl     = document.getElementById('progress');
+  const feed           = document.getElementById('feed');
+  const emptyState     = document.getElementById('empty-state');
+  const counter        = document.getElementById('counter');
+  const drawer         = document.getElementById('upload-drawer');
+  const toggleBtn      = document.getElementById('toggle-btn');
+  const signinBtn      = document.getElementById('signin-btn');
+  const authArea       = document.getElementById('auth-area');
+  const drawerUserRow  = document.getElementById('drawer-user-row');
+  const confirmOverlay = document.getElementById('confirm-overlay');
+  const confirmMsg     = document.getElementById('confirm-msg');
+  const confirmOk      = document.getElementById('confirm-ok');
+  const confirmCancel  = document.getElementById('confirm-cancel');
 
-  // Persist username
-  const savedName = localStorage.getItem('gallery-username');
-  if (savedName) usernameInput.value = savedName;
-  usernameInput.addEventListener('input', () => {
-    localStorage.setItem('gallery-username', usernameInput.value.trim());
+  let currentUser = null;
+
+  // ── Confirm dialog ──
+  function confirm(msg) {
+    return new Promise(resolve => {
+      confirmMsg.textContent = msg;
+      confirmOverlay.classList.add('show');
+      const ok  = () => { cleanup(); resolve(true); };
+      const no  = () => { cleanup(); resolve(false); };
+      const cleanup = () => {
+        confirmOverlay.classList.remove('show');
+        confirmOk.removeEventListener('click', ok);
+        confirmCancel.removeEventListener('click', no);
+      };
+      confirmOk.addEventListener('click', ok);
+      confirmCancel.addEventListener('click', no);
+    });
+  }
+
+  // ── Auth state ──
+  onAuthStateChanged(auth, user => {
+    currentUser = user;
+
+    if (user) {
+      // Signed in
+      authArea.innerHTML = `
+        <div class="user-chip">
+          <img src="${user.photoURL}" alt="${esc(user.displayName)}" referrerpolicy="no-referrer">
+          <span>${esc(user.displayName)}</span>
+        </div>
+        <button class="btn-auth signout" id="signout-btn">Sign out</button>
+      `;
+      document.getElementById('signout-btn').addEventListener('click', () => signOut(auth));
+
+      drawerUserRow.innerHTML = `
+        <div class="user-chip">
+          <img src="${user.photoURL}" alt="${esc(user.displayName)}" referrerpolicy="no-referrer">
+          <span style="font-size:0.72rem;color:var(--text)">${esc(user.displayName)}</span>
+        </div>
+      `;
+
+      toggleBtn.style.display = '';
+      signinBtn.style.display = 'none';
+    } else {
+      // Signed out
+      authArea.innerHTML = `<button class="btn-auth signin" id="signin-btn">Sign in with Google</button>`;
+      document.getElementById('signin-btn').addEventListener('click', signInGoogle);
+      drawerUserRow.innerHTML = '';
+      toggleBtn.style.display = 'none';
+      drawer.classList.remove('open');
+      toggleBtn.textContent = '+ Upload';
+    }
+
+    // Refresh delete button visibility across all slides
+    document.querySelectorAll('.btn-delete-image').forEach(btn => {
+      btn.classList.toggle('visible', user && btn.dataset.uid === user.uid);
+    });
+    document.querySelectorAll('.btn-delete-comment').forEach(btn => {
+      btn.classList.toggle('visible', user && btn.dataset.uid === user.uid);
+    });
+
+    // Refresh comment forms
+    document.querySelectorAll('.comment-form-area').forEach(area => {
+      renderCommentForm(area, area.dataset.imageId);
+    });
   });
 
-  // Drawer toggle
+  function signInGoogle() {
+    signInWithPopup(auth, new GoogleAuthProvider()).catch(err => showToast(err.message));
+  }
+
+  // ── Drawer toggle ──
   toggleBtn.addEventListener('click', () => {
     drawer.classList.toggle('open');
-    toggleBtn.textContent = drawer.classList.contains('open') ? 'x Close' : '+ Upload';
+    toggleBtn.textContent = drawer.classList.contains('open') ? '✕ Close' : '+ Upload';
   });
 
-  // File select
+  // ── File select ──
   fileInput.addEventListener('change', () => {
     const file = fileInput.files[0];
     if (file) { fileNameEl.textContent = file.name; uploadBtn.disabled = false; }
   });
 
-  // Upload
+  // ── Upload ──
   uploadBtn.addEventListener('click', async () => {
+    if (!currentUser) { showToast('Please sign in first'); return; }
     const file = fileInput.files[0];
     if (!file) return;
-
-    const username = usernameInput.value.trim() || 'Anonymous';
-    const caption  = captionInput.value.trim()  || 'Untitled';
-
+    const caption = captionInput.value.trim() || 'Untitled';
     uploadBtn.disabled = true;
     progressEl.style.width = '25%';
-
     try {
       const fd = new FormData();
       fd.append('file', file);
       fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
       const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: fd });
       progressEl.style.width = '75%';
       const data = await res.json();
       if (data.error) throw new Error(data.error.message);
-
       await addDoc(collection(db, 'images'), {
-        url: data.secure_url, caption, username, createdAt: serverTimestamp()
+        url:      data.secure_url,
+        caption,
+        username: currentUser.displayName,
+        uid:      currentUser.uid,
+        avatar:   currentUser.photoURL,
+        createdAt: serverTimestamp()
       });
-
       captionInput.value = ''; fileInput.value = '';
       fileNameEl.textContent = 'No file chosen';
       uploadBtn.disabled = true;
@@ -587,16 +562,19 @@ const firebaseConfig = {
     }
   });
 
-  // Real-time feed
+  // ── Real-time feed ──
   let slideCount = 0;
-  const imagesQuery = query(collection(db, 'images'), orderBy('createdAt', 'desc'));
-
-  onSnapshot(imagesQuery, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
+  onSnapshot(query(collection(db, 'images'), orderBy('createdAt', 'desc')), snapshot => {
+    snapshot.docChanges().forEach(change => {
       if (change.type === 'added') {
         slideCount++;
         renderSlide(change.doc.id, change.doc.data(), slideCount);
         emptyState.style.display = 'none';
+      }
+      if (change.type === 'removed') {
+        const el = document.querySelector(`.slide[data-id="${change.doc.id}"]`);
+        if (el) el.remove();
+        slideCount = Math.max(0, slideCount - 1);
       }
     });
     counter.textContent = slideCount > 0 ? `${slideCount} image${slideCount !== 1 ? 's' : ''}` : '';
@@ -610,33 +588,40 @@ const firebaseConfig = {
     const slide = document.createElement('div');
     slide.className = 'slide';
     slide.dataset.id = id;
-    const isFirst = index === 1;
+
+    const isOwner = currentUser && currentUser.uid === imgData.uid;
 
     slide.innerHTML = `
       <div class="slide-image">
         <img src="${imgData.url}" alt="${esc(imgData.caption)}" loading="lazy">
         <div class="slide-index">${String(index).padStart(2,'0')}</div>
+        <button class="btn-delete-image ${isOwner ? 'visible' : ''}" data-uid="${esc(imgData.uid)}" data-id="${id}">
+          Delete post
+        </button>
         <div class="slide-meta">
+          ${imgData.avatar ? `<img src="${imgData.avatar}" style="width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);margin-bottom:0.5rem" referrerpolicy="no-referrer">` : ''}
           <div class="slide-caption">${esc(imgData.caption)}</div>
           <div class="slide-author">&#8212; ${esc(imgData.username || 'Anonymous')}</div>
           <div class="slide-date">${ts}</div>
         </div>
-        ${isFirst ? `<div class="scroll-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg><span>Scroll</span></div>` : ''}
+        ${index === 1 ? `<div class="scroll-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg><span>Scroll</span></div>` : ''}
       </div>
-      <div class="slide-panel">
-        <div class="panel-header">
-          <span class="panel-title">Comments</span>
-          <span class="comment-count" id="count-${id}"></span>
-        </div>
-        <div class="comments-list" id="comments-${id}">
-          <div class="no-comments">No comments yet.</div>
-        </div>
-        <div class="comment-form">
-          <input class="field" type="text" id="name-${id}" placeholder="Your name..." value="${esc(localStorage.getItem('gallery-username') || '')}">
-          <div class="form-row">
-            <input class="field" type="text" id="text-${id}" placeholder="Write a comment...">
-            <button class="btn-post" data-id="${id}">Post</button>
+      <div class="slide-panel" id="panel-${id}">
+        <button class="panel-toggle" id="toggle-${id}" aria-label="Toggle comments">
+          <svg class="toggle-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          <span class="toggle-count" id="toggle-count-${id}"></span>
+        </button>
+        <div class="panel-body">
+          <div class="panel-header">
+            <span class="panel-title">Comments</span>
+            <span class="comment-count" id="count-${id}"></span>
           </div>
+          <div class="comments-list" id="comments-${id}">
+            <div class="no-comments">No comments yet.</div>
+          </div>
+          <div class="comment-form-area" id="form-area-${id}" data-image-id="${id}"></div>
         </div>
       </div>
     `;
@@ -644,62 +629,112 @@ const firebaseConfig = {
     const firstSlide = feed.querySelector('.slide');
     firstSlide ? feed.insertBefore(slide, firstSlide) : feed.appendChild(slide);
 
-    // Sync name fields across slides
-    const nameField = slide.querySelector(`#name-${id}`);
-    nameField.addEventListener('input', () => {
-      localStorage.setItem('gallery-username', nameField.value.trim());
-      document.querySelectorAll('[id^="name-"]').forEach(f => { f.value = nameField.value; });
-      usernameInput.value = nameField.value;
+    // Delete image
+    slide.querySelector('.btn-delete-image').addEventListener('click', async () => {
+      if (!currentUser) return;
+      const yes = await confirm('Delete this post? This cannot be undone.');
+      if (!yes) return;
+      await deleteDoc(doc(db, 'images', id));
+      showToast('Post deleted');
     });
 
-    const textField = slide.querySelector(`#text-${id}`);
-    const postBtn   = slide.querySelector('.btn-post');
-    postBtn.addEventListener('click', () => postComment(id, nameField, textField));
-    textField.addEventListener('keydown', e => { if (e.key === 'Enter') postComment(id, nameField, textField); });
+    // Panel toggle
+    const panel    = slide.querySelector(`#panel-${id}`);
+    const toggleEl = slide.querySelector(`#toggle-${id}`);
+    const isMobile = () => window.innerWidth <= 768;
+
+    if (isMobile()) {
+      toggleEl.addEventListener('click', () => {
+        const isOpen = panel.classList.toggle('mobile-open');
+        toggleEl.classList.toggle('panel-open', isOpen);
+      });
+    } else {
+      toggleEl.addEventListener('click', () => slide.classList.toggle('panel-collapsed'));
+    }
+
+    // Render comment form
+    const formArea = slide.querySelector(`#form-area-${id}`);
+    renderCommentForm(formArea, id);
 
     // Live comments
-    onSnapshot(
-      query(collection(db, 'images', id, 'comments'), orderBy('createdAt', 'asc')),
-      (snap) => {
-        const list    = document.getElementById(`comments-${id}`);
-        const countEl = document.getElementById(`count-${id}`);
-        if (!list) return;
-        list.innerHTML = '';
-        if (snap.empty) {
-          list.innerHTML = '<div class="no-comments">No comments yet.</div>';
-          if (countEl) countEl.textContent = '';
-          return;
-        }
-        if (countEl) countEl.textContent = snap.size;
-        snap.forEach(doc => {
-          const c  = doc.data();
-          const el = document.createElement('div');
-          el.className = 'comment-item';
-          const time = c.createdAt
-            ? new Date(c.createdAt.seconds * 1000).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
-            : '';
-          el.innerHTML = `
-            <div class="comment-header">
-              <span class="comment-username">${esc(c.username || 'Anonymous')}</span>
-              <span class="comment-time">${time}</span>
-            </div>
-            <div class="comment-text">${esc(c.text)}</div>
-          `;
-          list.appendChild(el);
+    onSnapshot(query(collection(db, 'images', id, 'comments'), orderBy('createdAt', 'asc')), snap => {
+      const list      = document.getElementById(`comments-${id}`);
+      const countEl   = document.getElementById(`count-${id}`);
+      const toggleCnt = document.getElementById(`toggle-count-${id}`);
+      if (!list) return;
+      list.innerHTML = '';
+      const n = snap.size;
+      if (countEl) countEl.textContent = n || '';
+      if (toggleCnt) toggleCnt.textContent = n || '';
+      if (snap.empty) { list.innerHTML = '<div class="no-comments">No comments yet.</div>'; return; }
+      snap.forEach(cdoc => {
+        const c  = cdoc.data();
+        const el = document.createElement('div');
+        el.className = 'comment-item';
+        const time    = c.createdAt ? new Date(c.createdAt.seconds * 1000).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }) : '';
+        const isOwner = currentUser && currentUser.uid === c.uid;
+        el.innerHTML = `
+          <div class="comment-header">
+            ${c.avatar ? `<img class="comment-avatar" src="${c.avatar}" referrerpolicy="no-referrer">` : ''}
+            <span class="comment-username">${esc(c.username || 'Anonymous')}</span>
+            <span class="comment-time">${time}</span>
+            <button class="btn-delete-comment ${isOwner ? 'visible' : ''}" data-uid="${esc(c.uid)}" data-comment-id="${cdoc.id}" data-image-id="${id}" title="Delete comment">✕</button>
+          </div>
+          <div class="comment-text">${esc(c.text)}</div>
+        `;
+        // Delete comment
+        el.querySelector('.btn-delete-comment').addEventListener('click', async () => {
+          const yes = await confirm('Delete this comment?');
+          if (!yes) return;
+          await deleteDoc(doc(db, 'images', id, 'comments', cdoc.id));
         });
-        list.scrollTop = list.scrollHeight;
-      }
-    );
+        list.appendChild(el);
+      });
+      list.scrollTop = list.scrollHeight;
+    });
   }
 
-  async function postComment(imageId, nameField, textField) {
+  function renderCommentForm(area, imageId) {
+    if (!area) return;
+    if (currentUser) {
+      area.innerHTML = `
+        <div class="comment-form">
+          <div class="commenter-info">
+            <img src="${currentUser.photoURL}" referrerpolicy="no-referrer">
+            <span class="commenter-name">${esc(currentUser.displayName)}</span>
+          </div>
+          <div class="form-row">
+            <input class="field" type="text" id="text-${imageId}" placeholder="Write a comment...">
+            <button class="btn-post" data-id="${imageId}">Post</button>
+          </div>
+        </div>
+      `;
+      const textField = area.querySelector(`#text-${imageId}`);
+      const postBtn   = area.querySelector('.btn-post');
+      postBtn.addEventListener('click', () => postComment(imageId, textField));
+      textField.addEventListener('keydown', e => { if (e.key === 'Enter') postComment(imageId, textField); });
+    } else {
+      area.innerHTML = `
+        <div class="sign-in-prompt">
+          <span>Sign in to comment</span>
+          <button id="panel-signin-${imageId}">Sign in with Google</button>
+        </div>
+      `;
+      area.querySelector(`#panel-signin-${imageId}`).addEventListener('click', signInGoogle);
+    }
+  }
+
+  async function postComment(imageId, textField) {
+    if (!currentUser) { showToast('Please sign in first'); return; }
     const text = textField.value.trim();
     if (!text) return;
-    const username = nameField.value.trim() || 'Anonymous';
-    localStorage.setItem('gallery-username', username);
     textField.value = '';
     await addDoc(collection(db, 'images', imageId, 'comments'), {
-      text, username, createdAt: serverTimestamp()
+      text,
+      username:  currentUser.displayName,
+      uid:       currentUser.uid,
+      avatar:    currentUser.photoURL,
+      createdAt: serverTimestamp()
     });
   }
 
@@ -710,8 +745,7 @@ const firebaseConfig = {
 
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
   }
 </script>
