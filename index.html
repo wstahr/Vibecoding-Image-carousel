@@ -5,326 +5,498 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gallery</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Instrument+Mono:ital@0;1&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink: #1a1410;
-      --paper: #f5f0e8;
-      --cream: #ede7d9;
-      --accent: #c0392b;
-      --muted: #8a7f72;
-      --border: #cfc5b4;
-      --shadow: rgba(26,20,16,0.12);
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --panel: #141414;
+      --border: rgba(255,255,255,0.07);
+      --text: #e8e4dc;
+      --muted: #5a5550;
+      --accent: #c8a96e;
+      --accent-dim: rgba(200,169,110,0.15);
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'DM Mono', monospace;
-      background: var(--paper);
-      color: var(--ink);
-      min-height: 100vh;
-    }
-
-    /* Grain overlay */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 999;
-      opacity: 0.5;
-    }
-
-    header {
-      border-bottom: 1px solid var(--border);
-      padding: 2rem 3rem;
+      font-family: 'Instrument Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      height: 100dvh;
+      overflow: hidden;
       display: flex;
-      align-items: baseline;
-      gap: 1.5rem;
-      background: var(--paper);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      flex-direction: column;
     }
 
-    header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      letter-spacing: -0.02em;
-      color: var(--ink);
+    /* Upload drawer */
+    #upload-drawer {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      transform: translateY(-100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 2.5rem;
     }
 
-    header span {
-      font-size: 0.7rem;
-      color: var(--muted);
+    #upload-drawer.open { transform: translateY(0); }
+
+    .drawer-inner {
+      max-width: 700px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .drawer-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 300;
       letter-spacing: 0.15em;
       text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
     }
 
-    .upload-bar {
-      background: var(--cream);
-      border-bottom: 1px solid var(--border);
-      padding: 1.5rem 3rem;
+    .drawer-row {
       display: flex;
-      align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
       flex-wrap: wrap;
+      align-items: center;
     }
 
-    .upload-label {
+    .field {
+      font-family: 'Instrument Mono', monospace;
+      font-size: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.55rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .field:focus { border-color: var(--accent); }
+    .field::placeholder { color: var(--muted); }
+
+    .file-label {
       display: inline-flex;
       align-items: center;
-      gap: 0.6rem;
-      cursor: pointer;
-      font-size: 0.75rem;
+      gap: 0.5rem;
+      font-size: 0.7rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--ink);
+      color: var(--text);
       border: 1px solid var(--border);
-      padding: 0.6rem 1.2rem;
-      background: var(--paper);
+      padding: 0.55rem 1rem;
+      cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
     }
 
-    .upload-label:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-    .upload-label input { display: none; }
+    .file-label:hover { border-color: var(--accent); color: var(--accent); }
+    .file-label input { display: none; }
 
-    #caption-input {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.8rem;
-      border: 1px solid var(--border);
-      background: var(--paper);
-      color: var(--ink);
-      padding: 0.6rem 1rem;
-      flex: 1;
-      min-width: 200px;
-      outline: none;
-    }
-
-    #caption-input:focus { border-color: var(--ink); }
-
-    #upload-btn {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 0.65rem 1.5rem;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    #upload-btn:hover { opacity: 0.85; }
-    #upload-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .file-name {
-      font-size: 0.72rem;
+    #file-name {
+      font-size: 0.68rem;
       color: var(--muted);
       font-style: italic;
+      flex: 1;
+      min-width: 100px;
     }
 
-    #progress-bar {
-      height: 2px;
+    .btn-upload {
+      font-family: 'Instrument Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 0.6rem 1.6rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-upload:hover { opacity: 0.85; }
+    .btn-upload:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    #progress {
+      height: 1px;
       background: var(--accent);
       width: 0;
       transition: width 0.3s;
-      margin-top: 0.5rem;
     }
 
-    /* Gallery grid */
-    #gallery {
-      padding: 3rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 2.5rem;
-    }
-
-    .card {
-      background: white;
-      border: 1px solid var(--border);
-      box-shadow: 4px 4px 0 var(--border);
+    /* Top nav */
+    #topbar {
       display: flex;
-      flex-direction: column;
-      animation: fadeIn 0.4s ease;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 52px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 50;
+    }
+
+    .site-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+
+    #counter {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .btn-toggle-upload {
+      font-family: 'Instrument Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid rgba(200,169,110,0.3);
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-toggle-upload:hover { background: var(--accent-dim); }
+
+    /* Feed */
+    #feed {
+      flex: 1;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scrollbar-width: none;
+    }
+
+    #feed::-webkit-scrollbar { display: none; }
+
+    /* Slide */
+    .slide {
+      height: calc(100dvh - 52px);
+      scroll-snap-align: start;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      animation: fadeIn 0.5s ease;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
-    .card-img-wrap {
+    /* Image side */
+    .slide-image {
       position: relative;
       overflow: hidden;
-      aspect-ratio: 4/3;
-      background: var(--cream);
+      background: #050505;
     }
 
-    .card-img-wrap img {
+    .slide-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: transform 0.4s ease;
+      transition: transform 8s ease;
     }
 
-    .card:hover .card-img-wrap img { transform: scale(1.03); }
+    .slide:hover .slide-image img { transform: scale(1.03); }
 
-    .card-body {
-      padding: 1.2rem 1.4rem;
-      border-top: 1px solid var(--border);
-      flex: 1;
+    .slide-meta {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 3rem 2.5rem 2rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+    }
+
+    .slide-caption {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.2;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .slide-author {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .slide-date {
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.08em;
+      margin-top: 0.2rem;
+    }
+
+    .slide-index {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.25);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      align-items: center;
+      gap: 0.3rem;
+      opacity: 0.3;
+      animation: bob 2s infinite;
     }
 
-    .card-caption {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--ink);
-    }
-
-    .card-meta {
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-    }
-
-    /* Comments */
-    .comments-section { display: flex; flex-direction: column; gap: 0.6rem; }
-
-    .comment {
-      font-size: 0.72rem;
-      line-height: 1.5;
-      border-left: 2px solid var(--border);
-      padding-left: 0.7rem;
-      color: var(--ink);
-    }
-
-    .comment strong {
-      color: var(--accent);
-      font-weight: 400;
-      display: block;
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
+    .scroll-hint span {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      margin-bottom: 0.1rem;
+      color: white;
     }
 
-    .comment-form {
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(5px); }
+    }
+
+    /* Comments panel */
+    .slide-panel {
+      border-left: 1px solid var(--border);
+      background: var(--panel);
       display: flex;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
+      flex-direction: column;
+      overflow: hidden;
     }
 
-    .comment-input {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      border: 1px solid var(--border);
-      background: var(--paper);
-      color: var(--ink);
-      padding: 0.4rem 0.7rem;
+    .panel-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .panel-title {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .comment-count {
+      font-size: 0.62rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    .comments-list {
       flex: 1;
-      outline: none;
+      overflow-y: auto;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
     }
 
-    .comment-input:focus { border-color: var(--ink); }
+    .comment-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      animation: commentIn 0.3s ease;
+    }
 
-    .comment-btn {
-      font-family: 'DM Mono', monospace;
+    @keyframes commentIn {
+      from { opacity: 0; transform: translateX(6px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .comment-header { display: flex; align-items: baseline; gap: 0.6rem; }
+
+    .comment-username {
       font-size: 0.65rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      background: var(--ink);
-      color: var(--paper);
-      border: none;
-      padding: 0.4rem 0.9rem;
-      cursor: pointer;
-      transition: opacity 0.2s;
+      color: var(--accent);
     }
 
-    .comment-btn:hover { opacity: 0.7; }
+    .comment-time { font-size: 0.58rem; color: var(--muted); }
+
+    .comment-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: rgba(232,228,220,0.8);
+    }
+
+    .no-comments {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    /* Comment form */
+    .comment-form {
+      border-top: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    .comment-form .field { width: 100%; }
+
+    .form-row { display: flex; gap: 0.5rem; }
+
+    .btn-post {
+      font-family: 'Instrument Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid rgba(200,169,110,0.3);
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-post:hover { background: var(--accent-dim); }
 
     /* Empty state */
     #empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 6rem 2rem;
+      height: calc(100dvh - 52px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
       color: var(--muted);
     }
 
     #empty-state p:first-child {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
       font-style: italic;
-      margin-bottom: 0.5rem;
+      font-weight: 300;
+      color: rgba(232,228,220,0.15);
     }
 
-    #empty-state p:last-child { font-size: 0.72rem; letter-spacing: 0.1em; }
+    #empty-state p:last-child {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
 
     /* Toast */
     #toast {
       position: fixed;
       bottom: 2rem;
-      right: 2rem;
-      background: var(--ink);
-      color: var(--paper);
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      padding: 0.8rem 1.4rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.7rem 1.5rem;
       opacity: 0;
-      transform: translateY(10px);
       transition: all 0.3s;
       pointer-events: none;
-      z-index: 100;
+      z-index: 200;
+      white-space: nowrap;
     }
 
-    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Gallery</h1>
-  <span>Powered by Firebase</span>
-</header>
-
-<div class="upload-bar">
-  <label class="upload-label">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-    Choose image
-    <input type="file" id="file-input" accept="image/*">
-  </label>
-  <span class="file-name" id="file-name">No file chosen</span>
-  <input type="text" id="caption-input" placeholder="Add a caption (optional)…">
-  <button id="upload-btn" disabled>Upload</button>
-  <div id="progress-bar"></div>
+<!-- Upload Drawer -->
+<div id="upload-drawer">
+  <div class="drawer-inner">
+    <div class="drawer-title">New Post</div>
+    <div class="drawer-row">
+      <input class="field" type="text" id="username-input" placeholder="Your name..." style="max-width:180px">
+      <input class="field" type="text" id="caption-input" placeholder="Caption...">
+    </div>
+    <div class="drawer-row">
+      <label class="file-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Choose image
+        <input type="file" id="file-input" accept="image/*">
+      </label>
+      <span id="file-name">No file chosen</span>
+      <button class="btn-upload" id="upload-btn" disabled>Publish</button>
+    </div>
+    <div id="progress"></div>
+  </div>
 </div>
 
-<div id="gallery">
+<!-- Top bar -->
+<div id="topbar">
+  <div class="site-title">Gallery</div>
+  <div class="nav-right">
+    <span id="counter"></span>
+    <button class="btn-toggle-upload" id="toggle-btn">+ Upload</button>
+  </div>
+</div>
+
+<!-- Feed -->
+<div id="feed">
   <div id="empty-state">
-    <p>No images yet.</p>
-    <p>Upload one above to get started.</p>
+    <p>Nothing here yet.</p>
+    <p>Be the first to post an image</p>
   </div>
 </div>
 
 <div id="toast"></div>
 
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   // =============================================
-  // 🔥 PASTE YOUR FIREBASE CONFIG HERE
+  // PASTE YOUR FIREBASE CONFIG HERE
   // =============================================
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDOIl7RcTMd5AdgumpQavT4gVU4KsaF_VM",
   authDomain: "learnfirebase-b0766.firebaseapp.com",
@@ -334,164 +506,205 @@ const firebaseConfig = {
   appId: "1:109847382681:web:3719ac656afd60b8b84608",
   measurementId: "G-ZT34MMR3H3"
 };
-  // =============================================
 
   // =============================================
-  // 🖼️ CLOUDINARY CONFIG
+  // CLOUDINARY CONFIG
   // =============================================
   const CLOUDINARY_CLOUD_NAME = "dzim2htst";      // e.g. "dxyz123abc"
   const CLOUDINARY_UPLOAD_PRESET = "carousel"; // e.g. "ml_default" (must be Unsigned)
-  // =============================================
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const db  = getFirestore(app);
 
-  const fileInput = document.getElementById('file-input');
-  const captionInput = document.getElementById('caption-input');
-  const uploadBtn = document.getElementById('upload-btn');
-  const fileNameEl = document.getElementById('file-name');
-  const progressBar = document.getElementById('progress-bar');
-  const gallery = document.getElementById('gallery');
-  const emptyState = document.getElementById('empty-state');
+  const fileInput     = document.getElementById('file-input');
+  const captionInput  = document.getElementById('caption-input');
+  const usernameInput = document.getElementById('username-input');
+  const uploadBtn     = document.getElementById('upload-btn');
+  const fileNameEl    = document.getElementById('file-name');
+  const progressEl    = document.getElementById('progress');
+  const feed          = document.getElementById('feed');
+  const emptyState    = document.getElementById('empty-state');
+  const counter       = document.getElementById('counter');
+  const drawer        = document.getElementById('upload-drawer');
+  const toggleBtn     = document.getElementById('toggle-btn');
 
-  // --- File selection ---
-  fileInput.addEventListener('change', () => {
-    const file = fileInput.files[0];
-    if (file) {
-      fileNameEl.textContent = file.name;
-      uploadBtn.disabled = false;
-    }
+  // Persist username
+  const savedName = localStorage.getItem('gallery-username');
+  if (savedName) usernameInput.value = savedName;
+  usernameInput.addEventListener('input', () => {
+    localStorage.setItem('gallery-username', usernameInput.value.trim());
   });
 
-  // --- Upload via Cloudinary ---
+  // Drawer toggle
+  toggleBtn.addEventListener('click', () => {
+    drawer.classList.toggle('open');
+    toggleBtn.textContent = drawer.classList.contains('open') ? 'x Close' : '+ Upload';
+  });
+
+  // File select
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (file) { fileNameEl.textContent = file.name; uploadBtn.disabled = false; }
+  });
+
+  // Upload
   uploadBtn.addEventListener('click', async () => {
     const file = fileInput.files[0];
     if (!file) return;
 
+    const username = usernameInput.value.trim() || 'Anonymous';
+    const caption  = captionInput.value.trim()  || 'Untitled';
+
     uploadBtn.disabled = true;
-    progressBar.style.width = '30%';
-    const caption = captionInput.value.trim() || 'Untitled';
+    progressEl.style.width = '25%';
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-        { method: 'POST', body: formData }
-      );
-
-      progressBar.style.width = '80%';
+      const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: fd });
+      progressEl.style.width = '75%';
       const data = await res.json();
-
       if (data.error) throw new Error(data.error.message);
 
-      const url = data.secure_url;
-
       await addDoc(collection(db, 'images'), {
-        url,
-        caption,
-        createdAt: serverTimestamp()
+        url: data.secure_url, caption, username, createdAt: serverTimestamp()
       });
 
-      captionInput.value = '';
-      fileInput.value = '';
+      captionInput.value = ''; fileInput.value = '';
       fileNameEl.textContent = 'No file chosen';
       uploadBtn.disabled = true;
-      progressBar.style.width = '100%';
-      setTimeout(() => { progressBar.style.width = '0'; }, 600);
-      showToast('Image uploaded!');
+      progressEl.style.width = '100%';
+      setTimeout(() => { progressEl.style.width = '0'; }, 600);
+      drawer.classList.remove('open');
+      toggleBtn.textContent = '+ Upload';
+      showToast('Published');
     } catch (err) {
-      showToast('Upload failed: ' + err.message);
+      showToast('Failed: ' + err.message);
       uploadBtn.disabled = false;
-      progressBar.style.width = '0';
+      progressEl.style.width = '0';
     }
   });
 
-  // --- Real-time gallery listener ---
+  // Real-time feed
+  let slideCount = 0;
   const imagesQuery = query(collection(db, 'images'), orderBy('createdAt', 'desc'));
 
   onSnapshot(imagesQuery, (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       if (change.type === 'added') {
-        const img = change.doc.data();
-        const id = change.doc.id;
-        renderCard(id, img);
+        slideCount++;
+        renderSlide(change.doc.id, change.doc.data(), slideCount);
+        emptyState.style.display = 'none';
       }
     });
-
-    emptyState.style.display = gallery.querySelectorAll('.card').length === 0 ? 'block' : 'none';
+    counter.textContent = slideCount > 0 ? `${slideCount} image${slideCount !== 1 ? 's' : ''}` : '';
   });
 
-  function renderCard(id, imgData) {
-    emptyState.style.display = 'none';
-
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.id = id;
-
+  function renderSlide(id, imgData, index) {
     const ts = imgData.createdAt
-      ? new Date(imgData.createdAt.seconds * 1000).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+      ? new Date(imgData.createdAt.seconds * 1000).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })
       : 'Just now';
 
-    card.innerHTML = `
-      <div class="card-img-wrap">
-        <img src="${imgData.url}" alt="${imgData.caption}" loading="lazy">
+    const slide = document.createElement('div');
+    slide.className = 'slide';
+    slide.dataset.id = id;
+    const isFirst = index === 1;
+
+    slide.innerHTML = `
+      <div class="slide-image">
+        <img src="${imgData.url}" alt="${esc(imgData.caption)}" loading="lazy">
+        <div class="slide-index">${String(index).padStart(2,'0')}</div>
+        <div class="slide-meta">
+          <div class="slide-caption">${esc(imgData.caption)}</div>
+          <div class="slide-author">&#8212; ${esc(imgData.username || 'Anonymous')}</div>
+          <div class="slide-date">${ts}</div>
+        </div>
+        ${isFirst ? `<div class="scroll-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg><span>Scroll</span></div>` : ''}
       </div>
-      <div class="card-body">
-        <div class="card-caption">${imgData.caption}</div>
-        <div class="card-meta">${ts}</div>
-        <div class="comments-section" id="comments-${id}"></div>
+      <div class="slide-panel">
+        <div class="panel-header">
+          <span class="panel-title">Comments</span>
+          <span class="comment-count" id="count-${id}"></span>
+        </div>
+        <div class="comments-list" id="comments-${id}">
+          <div class="no-comments">No comments yet.</div>
+        </div>
         <div class="comment-form">
-          <input class="comment-input" placeholder="Leave a comment…" type="text" data-id="${id}">
-          <button class="comment-btn" data-id="${id}">Post</button>
+          <input class="field" type="text" id="name-${id}" placeholder="Your name..." value="${esc(localStorage.getItem('gallery-username') || '')}">
+          <div class="form-row">
+            <input class="field" type="text" id="text-${id}" placeholder="Write a comment...">
+            <button class="btn-post" data-id="${id}">Post</button>
+          </div>
         </div>
       </div>
     `;
 
-    gallery.prepend(card);
+    const firstSlide = feed.querySelector('.slide');
+    firstSlide ? feed.insertBefore(slide, firstSlide) : feed.appendChild(slide);
 
-    // Post comment handler
-    const btn = card.querySelector('.comment-btn');
-    const input = card.querySelector('.comment-input');
+    // Sync name fields across slides
+    const nameField = slide.querySelector(`#name-${id}`);
+    nameField.addEventListener('input', () => {
+      localStorage.setItem('gallery-username', nameField.value.trim());
+      document.querySelectorAll('[id^="name-"]').forEach(f => { f.value = nameField.value; });
+      usernameInput.value = nameField.value;
+    });
 
-    btn.addEventListener('click', () => postComment(id, input));
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') postComment(id, input); });
+    const textField = slide.querySelector(`#text-${id}`);
+    const postBtn   = slide.querySelector('.btn-post');
+    postBtn.addEventListener('click', () => postComment(id, nameField, textField));
+    textField.addEventListener('keydown', e => { if (e.key === 'Enter') postComment(id, nameField, textField); });
 
-    // Real-time comments listener for this image
-    const commentsQuery = query(
-      collection(db, 'images', id, 'comments'),
-      orderBy('createdAt', 'asc')
+    // Live comments
+    onSnapshot(
+      query(collection(db, 'images', id, 'comments'), orderBy('createdAt', 'asc')),
+      (snap) => {
+        const list    = document.getElementById(`comments-${id}`);
+        const countEl = document.getElementById(`count-${id}`);
+        if (!list) return;
+        list.innerHTML = '';
+        if (snap.empty) {
+          list.innerHTML = '<div class="no-comments">No comments yet.</div>';
+          if (countEl) countEl.textContent = '';
+          return;
+        }
+        if (countEl) countEl.textContent = snap.size;
+        snap.forEach(doc => {
+          const c  = doc.data();
+          const el = document.createElement('div');
+          el.className = 'comment-item';
+          const time = c.createdAt
+            ? new Date(c.createdAt.seconds * 1000).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
+            : '';
+          el.innerHTML = `
+            <div class="comment-header">
+              <span class="comment-username">${esc(c.username || 'Anonymous')}</span>
+              <span class="comment-time">${time}</span>
+            </div>
+            <div class="comment-text">${esc(c.text)}</div>
+          `;
+          list.appendChild(el);
+        });
+        list.scrollTop = list.scrollHeight;
+      }
     );
-
-    onSnapshot(commentsQuery, (snap) => {
-      const container = document.getElementById(`comments-${id}`);
-      container.innerHTML = '';
-      snap.forEach(doc => {
-        const c = doc.data();
-        const el = document.createElement('div');
-        el.className = 'comment';
-        const time = c.createdAt
-          ? new Date(c.createdAt.seconds * 1000).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
-          : '';
-        el.innerHTML = `<strong>${time}</strong>${escapeHtml(c.text)}`;
-        container.appendChild(el);
-      });
-    });
   }
 
-  async function postComment(imageId, input) {
-    const text = input.value.trim();
+  async function postComment(imageId, nameField, textField) {
+    const text = textField.value.trim();
     if (!text) return;
-    input.value = '';
+    const username = nameField.value.trim() || 'Anonymous';
+    localStorage.setItem('gallery-username', username);
+    textField.value = '';
     await addDoc(collection(db, 'images', imageId, 'comments'), {
-      text,
-      createdAt: serverTimestamp()
+      text, username, createdAt: serverTimestamp()
     });
   }
 
-  function escapeHtml(str) {
+  function esc(str) {
+    if (!str) return '';
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
@@ -499,7 +712,7 @@ const firebaseConfig = {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+    setTimeout(() => t.classList.remove('show'), 2800);
   }
 </script>
 </body>
