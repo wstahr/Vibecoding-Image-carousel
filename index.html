@@ -313,27 +313,57 @@
     .confirm-btns button.danger:hover { background: rgba(180,40,40,0.3); }
 
     /* ══ MOBILE ══ */
+
+    /* Tap bar at bottom of image to open comments */
+    .mobile-comments-bar {
+      display: none;
+    }
     @media (max-width: 768px) {
-      .slide { grid-template-columns: 1fr !important; grid-template-rows: 1fr; }
+      .mobile-comments-bar {
+        display: flex;
+        position: absolute; bottom: 0; left: 0; right: 0;
+        align-items: center; justify-content: center; gap: 0.6rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+        cursor: pointer; z-index: 10;
+        font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+        color: rgba(255,255,255,0.7);
+        border: none; width: 100%;
+        transition: color 0.2s;
+      }
+      .mobile-comments-bar:hover { color: var(--accent); }
+      .mobile-comments-bar .bar-count {
+        color: var(--accent); font-size: 0.65rem;
+      }
+
+      /* Slide layout: default = image full height, open = split 50/50 */
+      .slide {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: 1fr;
+        transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .slide.comments-open {
+        grid-template-rows: 50dvh calc(50dvh - var(--topbar-h));
+      }
+
+      /* Panel: hidden by default, shown inline when open */
       .slide-panel {
-        position: fixed; bottom: 0; left: 0; right: 0; height: 72dvh;
+        position: relative;
         border-left: none; border-top: 1px solid var(--border);
-        transform: translateY(100%);
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 30;
+        height: 100%;
+        transform: none !important;
+        display: none;
+        z-index: 1;
       }
-      .slide-panel.mobile-open { transform: translateY(0); }
+      .slide.comments-open .slide-panel {
+        display: flex;
+      }
+
+      /* Hide the old floating pill toggle on mobile */
+      .panel-toggle { display: none !important; }
+
       .panel-body { opacity: 1 !important; pointer-events: auto !important; }
-      .panel-toggle {
-        position: fixed; bottom: 1.25rem; right: 1.25rem; top: auto; left: auto;
-        transform: none; border: 1px solid rgba(255,255,255,0.12); border-radius: 999px;
-        padding: 0.55rem 0.9rem; flex-direction: row; gap: 0.4rem;
-        background: rgba(14,14,14,0.88); backdrop-filter: blur(10px); z-index: 35;
-      }
-      .toggle-count { writing-mode: horizontal-tb; opacity: 1 !important; font-size: 0.65rem; }
-      .toggle-arrow { transform: rotate(-90deg) !important; }
-      .panel-toggle.panel-open .toggle-arrow { transform: rotate(90deg) !important; }
-      .scroll-hint { right: 5.5rem; }
+      .scroll-hint { bottom: 3.5rem; right: 1.5rem; }
       .nav-right { gap: 0.75rem; }
       #counter { display: none; }
     }
@@ -396,7 +426,10 @@
 <!-- Upload Drawer -->
 <div id="upload-drawer">
   <div class="drawer-inner">
-    <div class="drawer-title">New Post</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.25rem">
+      <div class="drawer-title" style="margin-bottom:0">New Post</div>
+      <button id="drawer-close-btn" style="background:none;border:none;color:var(--muted);cursor:pointer;font-family:'Instrument Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.5rem;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">&#10005; Close</button>
+    </div>
     <div class="drawer-row" id="drawer-user-row">
       <!-- Populated by JS once signed in -->
     </div>
@@ -660,10 +693,15 @@
   }
 
   // ── Drawer toggle ──
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    toggleBtn.textContent = '+ Upload';
+  }
   toggleBtn.addEventListener('click', () => {
     drawer.classList.toggle('open');
     toggleBtn.textContent = drawer.classList.contains('open') ? '✕ Close' : '+ Upload';
   });
+  document.getElementById('drawer-close-btn').addEventListener('click', closeDrawer);
 
   // ── File select ──
   fileInput.addEventListener('change', () => {
@@ -754,6 +792,11 @@
           <div class="slide-date">${ts}</div>
         </div>
         ${index === 1 ? `<div class="scroll-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg><span>Scroll</span></div>` : ''}
+        <button class="mobile-comments-bar" id="mobile-bar-${id}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Comments</span>
+          <span class="bar-count" id="bar-count-${id}"></span>
+        </button>
       </div>
       <div class="slide-panel" id="panel-${id}">
         <button class="panel-toggle" id="toggle-${id}" aria-label="Toggle comments">
@@ -797,15 +840,28 @@
     // Panel toggle
     const panel    = slide.querySelector(`#panel-${id}`);
     const toggleEl = slide.querySelector(`#toggle-${id}`);
+    const mobileBar = slide.querySelector(`#mobile-bar-${id}`);
     const isMobile = () => window.innerWidth <= 768;
 
-    if (isMobile()) {
-      toggleEl.addEventListener('click', () => {
-        const isOpen = panel.classList.toggle('mobile-open');
-        toggleEl.classList.toggle('panel-open', isOpen);
+    // Desktop: collapse to thin strip
+    toggleEl.addEventListener('click', () => slide.classList.toggle('panel-collapsed'));
+
+    // Mobile: split screen open/close
+    if (mobileBar) {
+      mobileBar.addEventListener('click', () => {
+        const isOpen = slide.classList.toggle('comments-open');
+        if (isOpen) {
+          mobileBar.innerHTML = `
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="18 15 12 9 6 15"/></svg>
+            <span>Hide</span>`;
+        } else {
+          const cnt = document.getElementById(\`bar-count-\${id}\`);
+          mobileBar.innerHTML = `
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>Comments</span>
+            <span class="bar-count" id="bar-count-\${id}">\${cnt ? cnt.textContent : ''}</span>`;
+        }
       });
-    } else {
-      toggleEl.addEventListener('click', () => slide.classList.toggle('panel-collapsed'));
     }
 
     // Render comment form
@@ -822,6 +878,8 @@
       const n = snap.size;
       if (countEl) countEl.textContent = n || '';
       if (toggleCnt) toggleCnt.textContent = n || '';
+      const barCnt = document.getElementById(\`bar-count-\${id}\`);
+      if (barCnt) barCnt.textContent = n ? \`(\${n})\` : '';
       if (snap.empty) { list.innerHTML = '<div class="no-comments">No comments yet.</div>'; return; }
       snap.forEach(cdoc => {
         const c  = cdoc.data();
