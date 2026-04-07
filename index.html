@@ -314,17 +314,17 @@
 
     /* ══ MOBILE ══ */
 
-    /* Tap bar at bottom of image to open comments */
-    .mobile-comments-bar {
-      display: none;
-    }
+    /* Tap bar — hidden on desktop */
+    .mobile-comments-bar { display: none; }
+
     @media (max-width: 768px) {
+      /* Tap bar at the bottom of the image */
       .mobile-comments-bar {
         display: flex;
         position: absolute; bottom: 0; left: 0; right: 0;
         align-items: center; justify-content: center; gap: 0.6rem;
         padding: 0.75rem 1.5rem;
-        background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
         cursor: pointer; z-index: 10;
         font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
         color: rgba(255,255,255,0.7);
@@ -332,37 +332,46 @@
         transition: color 0.2s;
       }
       .mobile-comments-bar:hover { color: var(--accent); }
-      .mobile-comments-bar .bar-count {
-        color: var(--accent); font-size: 0.65rem;
-      }
+      .mobile-comments-bar .bar-count { color: var(--accent); }
 
-      /* Slide layout: default = image full height, open = split 50/50 */
+      /* Slide: single column, full viewport height */
       .slide {
         grid-template-columns: 1fr !important;
-        grid-template-rows: 1fr;
-        transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-      .slide.comments-open {
-        grid-template-rows: 50dvh calc(50dvh - var(--topbar-h));
+        grid-template-rows: 1fr 0px;
+        height: calc(100dvh - var(--topbar-h));
+        transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
       }
 
-      /* Panel: hidden by default, shown inline when open */
-      .slide-panel {
-        position: relative;
-        border-left: none; border-top: 1px solid var(--border);
-        height: 100%;
-        transform: none !important;
-        display: none;
-        z-index: 1;
+      /* When comments open: image top half, panel bottom half */
+      .slide.comments-open {
+        grid-template-rows: 50% 50% !important;
       }
-      .slide.comments-open .slide-panel {
+
+      /* slide-image always fills its grid cell */
+      .slide-image {
+        min-height: 0;
+        height: 100%;
+      }
+
+      /* Panel: lives in the grid, zero height by default */
+      .slide-panel {
+        position: relative !important;
+        transform: none !important;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
         display: flex;
       }
 
-      /* Hide the old floating pill toggle on mobile */
+      /* Hide panel contents until open */
+      .slide-panel .panel-body { opacity: 0; pointer-events: none; transition: opacity 0.2s 0s; }
+      .slide.comments-open .slide-panel .panel-body { opacity: 1 !important; pointer-events: auto !important; transition: opacity 0.2s 0.2s; }
+
+      /* Hide desktop toggle tab on mobile */
       .panel-toggle { display: none !important; }
 
-      .panel-body { opacity: 1 !important; pointer-events: auto !important; }
       .scroll-hint { bottom: 3.5rem; right: 1.5rem; }
       .nav-right { gap: 0.75rem; }
       #counter { display: none; }
