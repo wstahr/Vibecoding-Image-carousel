@@ -325,6 +325,7 @@
   async function openChat(targetUid, targetName, targetAvatar) {
     if (!me) return;
     activeConvId = convId(me.uid, targetUid);
+    const myName = me._displayName || me.displayName;
 
     // Update header
     headerTitle.textContent = targetName || 'Chat';
@@ -336,29 +337,33 @@
     }
     backBtn.classList.add('visible');
 
-    // On narrow screens hide conv list
+    // Show chat, hide list
     convList.classList.add('hidden');
     chatWindow.classList.add('visible');
+    messagesList.innerHTML = '';
 
-    // Mark as read
-    const myConvRef = doc(db, 'users', me.uid, 'conversations', activeConvId);
-    await setDoc(myConvRef, { unread: false }, { merge: true });
+    // Ensure the top-level conversations doc exists (required for subcollection writes)
+    const convDocRef = doc(db, 'conversations', activeConvId);
+    await setDoc(convDocRef, {
+      participants: [me.uid, targetUid],
+      createdAt: serverTimestamp()
+    }, { merge: true });
 
-    // Ensure conversation exists on both sides
+    // Ensure conversation metadata exists on both sides with lastAt so ordering works
+    const now = serverTimestamp();
+    const myConvRef    = doc(db, 'users', me.uid,   'conversations', activeConvId);
     const theirConvRef = doc(db, 'users', targetUid, 'conversations', activeConvId);
-    const myName = me._displayName || me.displayName;
     await setDoc(myConvRef, {
       withUid: targetUid, withName: targetName || 'Unknown',
-      withAvatar: targetAvatar || '', unread: false
+      withAvatar: targetAvatar || '', unread: false, lastAt: now
     }, { merge: true });
     await setDoc(theirConvRef, {
       withUid: me.uid, withName: myName,
-      withAvatar: me.photoURL || '', unread: true
+      withAvatar: me.photoURL || '', lastAt: now
     }, { merge: true });
 
-    // Listen to messages
+    // Listen to messages in real time
     if (unsubMessages) unsubMessages();
-    messagesList.innerHTML = '';
 
     unsubMessages = onSnapshot(
       query(collection(db, 'conversations', activeConvId, 'messages'), orderBy('createdAt', 'asc')),
@@ -379,12 +384,13 @@
           messagesList.appendChild(el);
         });
         messagesList.scrollTop = messagesList.scrollHeight;
-      }
+      },
+      err => console.error('Messages listener error:', err)
     );
 
     msgInput.focus();
 
-    // Highlight active in list
+    // Highlight active conv in list
     convList.querySelectorAll('.conv-item').forEach(el => {
       el.classList.toggle('active', el.dataset.uid === targetUid);
     });
@@ -397,27 +403,31 @@
     if (!text) return;
     msgInput.value = '';
 
-    const convRef = doc(db, 'conversations', activeConvId);
-    const msgsRef = collection(db, 'conversations', activeConvId, 'messages');
+    try {
+      // Write the message
+      await addDoc(collection(db, 'conversations', activeConvId, 'messages'), {
+        text,
+        senderUid:  me.uid,
+        senderName: me._displayName || me.displayName,
+        createdAt:  serverTimestamp()
+      });
 
-    await addDoc(msgsRef, {
-      text,
-      senderUid: me.uid,
-      senderName: me._displayName || me.displayName,
-      createdAt: serverTimestamp()
-    });
+      // Update preview on both sides
+      const myConvRef  = doc(db, 'users', me.uid, 'conversations', activeConvId);
+      const myConvSnap = await getDoc(myConvRef);
+      const theirUid   = myConvSnap.exists() ? myConvSnap.data().withUid : null;
+      const preview    = text.length > 40 ? text.slice(0, 40) + '…' : text;
+      const ts         = serverTimestamp();
 
-    // Update both sides' conversation previews
-    const myConvRef    = doc(db, 'users', me.uid, 'conversations', activeConvId);
-    const myConvSnap   = await getDoc(myConvRef);
-    const theirUid     = myConvSnap.data()?.withUid;
+      await setDoc(myConvRef, { lastMsg: preview, lastAt: ts, unread: false }, { merge: true });
 
-    if (theirUid) {
-      const theirConvRef = doc(db, 'users', theirUid, 'conversations', activeConvId);
-      const preview = text.length > 40 ? text.slice(0, 40) + '…' : text;
-      const ts = serverTimestamp();
-      await setDoc(myConvRef,    { lastMsg: preview, lastAt: ts, unread: false }, { merge: true });
-      await setDoc(theirConvRef, { lastMsg: preview, lastAt: ts, unread: true  }, { merge: true });
+      if (theirUid) {
+        const theirConvRef = doc(db, 'users', theirUid, 'conversations', activeConvId);
+        await setDoc(theirConvRef, { lastMsg: preview, lastAt: ts, unread: true }, { merge: true });
+      }
+    } catch(err) {
+      console.error('Send error:', err);
+      alert('Failed to send: ' + err.message);
     }
   }
 
