@@ -109,16 +109,17 @@
 
     /* Message button on slides */
     .btn-message-user {
-      position: absolute; bottom: 1rem; right: 1rem;
-      background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.7);
+      position: absolute; bottom: 4.5rem; right: 1rem;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.8);
       font-family: 'Instrument Mono', monospace; font-size: 0.6rem;
       letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 0.35rem 0.8rem; cursor: pointer; transition: all 0.2s;
+      padding: 0.4rem 0.9rem; cursor: pointer; transition: all 0.2s;
       display: none; align-items: center; gap: 0.4rem;
+      z-index: 15; pointer-events: auto;
     }
     .btn-message-user.visible { display: inline-flex; }
-    .btn-message-user:hover { background: rgba(200,169,110,0.2); color: var(--accent); border-color: rgba(200,169,110,0.3); }
+    .btn-message-user:hover { background: rgba(200,169,110,0.25); color: var(--accent); border-color: rgba(200,169,110,0.4); }
 
     /* Auth area */
     #auth-area { display: flex; align-items: center; gap: 0.75rem; }
