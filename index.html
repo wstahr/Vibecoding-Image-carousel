@@ -864,11 +864,11 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="18 15 12 9 6 15"/></svg>
             <span>Hide</span>`;
         } else {
-          const cnt = document.getElementById(\`bar-count-\${id}\`);
+          const cnt = document.getElementById(`bar-count-${id}`);
           mobileBar.innerHTML = `
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             <span>Comments</span>
-            <span class="bar-count" id="bar-count-\${id}">\${cnt ? cnt.textContent : ''}</span>`;
+            <span class="bar-count" id="bar-count-${id}">${cnt ? cnt.textContent : ''}</span>`;
         }
       });
     }
@@ -887,8 +887,8 @@
       const n = snap.size;
       if (countEl) countEl.textContent = n || '';
       if (toggleCnt) toggleCnt.textContent = n || '';
-      const barCnt = document.getElementById(\`bar-count-\${id}\`);
-      if (barCnt) barCnt.textContent = n ? \`(\${n})\` : '';
+      const barCnt = document.getElementById(`bar-count-${id}`);
+      if (barCnt) barCnt.textContent = n ? `(${n})` : '';
       if (snap.empty) { list.innerHTML = '<div class="no-comments">No comments yet.</div>'; return; }
       snap.forEach(cdoc => {
         const c  = cdoc.data();
