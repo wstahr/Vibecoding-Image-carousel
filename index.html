@@ -337,6 +337,58 @@
       .nav-right { gap: 0.75rem; }
       #counter { display: none; }
     }
+
+    /* ── Settings modal ── */
+    #settings-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    #settings-overlay.show { opacity: 1; pointer-events: auto; }
+    #settings-box {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 2rem; max-width: 360px; width: 90%;
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+    .settings-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.2rem;
+      font-weight: 300; letter-spacing: 0.1em; color: var(--text);
+    }
+    .settings-label {
+      font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.5rem; display: block;
+    }
+    .settings-input-row { display: flex; gap: 0.5rem; }
+    .btn-randomise {
+      font-family: 'Instrument Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.08em; text-transform: uppercase; background: transparent;
+      color: var(--muted); border: 1px solid var(--border);
+      padding: 0.5rem 0.8rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+    }
+    .btn-randomise:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+    .settings-footer { display: flex; gap: 0.75rem; justify-content: flex-end; }
+    .btn-settings-save {
+      font-family: 'Instrument Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      background: var(--accent); color: var(--bg); border: none;
+      padding: 0.5rem 1.2rem; cursor: pointer; font-weight: 600; transition: opacity 0.2s;
+    }
+    .btn-settings-save:hover { opacity: 0.85; }
+    .btn-settings-cancel {
+      font-family: 'Instrument Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.12em; text-transform: uppercase; background: transparent;
+      color: var(--muted); border: 1px solid var(--border);
+      padding: 0.5rem 1rem; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-settings-cancel:hover { color: var(--text); }
+
+    /* Settings icon button */
+    .btn-settings {
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; padding: 0.2rem; transition: color 0.2s;
+      display: flex; align-items: center;
+    }
+    .btn-settings:hover { color: var(--accent); }
   </style>
 </head>
 <body>
@@ -385,6 +437,24 @@
   </div>
 </div>
 
+<!-- Settings modal -->
+<div id="settings-overlay">
+  <div id="settings-box">
+    <div class="settings-title">Profile Settings</div>
+    <div>
+      <label class="settings-label" for="display-name-input">Display name</label>
+      <div class="settings-input-row">
+        <input class="field" type="text" id="display-name-input" placeholder="Enter a display name..." maxlength="32">
+        <button class="btn-randomise" id="randomise-btn" title="Generate random name">&#8981; Random</button>
+      </div>
+    </div>
+    <div class="settings-footer">
+      <button class="btn-settings-cancel" id="settings-cancel">Cancel</button>
+      <button class="btn-settings-save" id="settings-save">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- Confirm dialog -->
 <div id="confirm-overlay">
   <div id="confirm-box">
@@ -402,7 +472,7 @@
   import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
                                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp }
+  import { getFirestore, collection, addDoc, deleteDoc, doc, setDoc, getDoc, onSnapshot, query, orderBy, serverTimestamp }
                                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -459,28 +529,106 @@
     });
   }
 
+  // ── Random name generator ──
+  const adjectives = ['amber','azure','bold','bright','calm','cold','crisp','dark','deep','dusk',
+    'faint','fern','gold','grey','hazy','jade','keen','light','lime','lunar','misty','muted',
+    'noble','oak','pale','pine','quiet','raw','rich','rose','rust','sage','salt','sharp',
+    'silver','slate','smoke','still','swift','teal','velvet','warm','wild','worn'];
+  const nouns = ['bird','brook','cliff','cloud','coast','creek','crow','dune','dust','field',
+    'flame','flash','flint','fog','forest','frost','gale','glow','grain','grove','hill','hollow',
+    'lake','leaf','light','marsh','mist','moon','moss','peak','pine','rain','reed','ridge',
+    'river','rock','root','sand','sea','shade','shore','sky','smoke','snow','star','stone',
+    'storm','tide','trail','vale','wave','wind','wood'];
+
+  function randomName() {
+    const a = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const n = nouns[Math.floor(Math.random() * nouns.length)];
+    return a.charAt(0).toUpperCase() + a.slice(1) + ' ' + n.charAt(0).toUpperCase() + n.slice(1);
+  }
+
+  // ── Load/save display name from Firestore ──
+  async function loadDisplayName(uid) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid));
+      if (snap.exists() && snap.data().displayName) return snap.data().displayName;
+    } catch(e) {}
+    return null;
+  }
+
+  async function saveDisplayName(uid, name) {
+    await setDoc(doc(db, 'users', uid), { displayName: name }, { merge: true });
+  }
+
+  // ── Settings modal ──
+  const settingsOverlay  = document.getElementById('settings-overlay');
+  const displayNameInput = document.getElementById('display-name-input');
+  const randomiseBtn     = document.getElementById('randomise-btn');
+  const settingsSave     = document.getElementById('settings-save');
+  const settingsCancel   = document.getElementById('settings-cancel');
+
+  randomiseBtn.addEventListener('click', () => {
+    displayNameInput.value = randomName();
+  });
+
+  settingsCancel.addEventListener('click', () => {
+    settingsOverlay.classList.remove('show');
+  });
+
+  settingsSave.addEventListener('click', async () => {
+    const name = displayNameInput.value.trim();
+    if (!name) { displayNameInput.focus(); return; }
+    if (!currentUser) return;
+    await saveDisplayName(currentUser.uid, name);
+    currentUser._displayName = name;
+    updateAuthUI(currentUser, name);
+    settingsOverlay.classList.remove('show');
+    showToast('Display name updated');
+  });
+
+  function openSettings(currentName) {
+    displayNameInput.value = currentName || '';
+    settingsOverlay.classList.add('show');
+    displayNameInput.focus();
+  }
+
+  function updateAuthUI(user, displayName) {
+    authArea.innerHTML = `
+      <div class="user-chip">
+        <img src="${user.photoURL}" alt="${esc(displayName)}" referrerpolicy="no-referrer">
+        <span>${esc(displayName)}</span>
+      </div>
+      <button class="btn-settings" id="settings-btn" title="Settings">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+      <button class="btn-auth signout" id="signout-btn">Sign out</button>
+    `;
+    document.getElementById('signout-btn').addEventListener('click', () => signOut(auth));
+    document.getElementById('settings-btn').addEventListener('click', () => openSettings(displayName));
+
+    drawerUserRow.innerHTML = `
+      <div class="user-chip">
+        <img src="${user.photoURL}" alt="${esc(displayName)}" referrerpolicy="no-referrer">
+        <span style="font-size:0.72rem;color:var(--text)">${esc(displayName)}</span>
+      </div>
+    `;
+  }
+
   // ── Auth state ──
-  onAuthStateChanged(auth, user => {
+  onAuthStateChanged(auth, async user => {
     currentUser = user;
 
     if (user) {
-      // Signed in
-      authArea.innerHTML = `
-        <div class="user-chip">
-          <img src="${user.photoURL}" alt="${esc(user.displayName)}" referrerpolicy="no-referrer">
-          <span>${esc(user.displayName)}</span>
-        </div>
-        <button class="btn-auth signout" id="signout-btn">Sign out</button>
-      `;
-      document.getElementById('signout-btn').addEventListener('click', () => signOut(auth));
-
-      drawerUserRow.innerHTML = `
-        <div class="user-chip">
-          <img src="${user.photoURL}" alt="${esc(user.displayName)}" referrerpolicy="no-referrer">
-          <span style="font-size:0.72rem;color:var(--text)">${esc(user.displayName)}</span>
-        </div>
-      `;
-
+      // Check for saved display name, else generate a random one and save it
+      let displayName = await loadDisplayName(user.uid);
+      if (!displayName) {
+        displayName = randomName();
+        await saveDisplayName(user.uid, displayName);
+      }
+      user._displayName = displayName;
+      updateAuthUI(user, displayName);
       toggleBtn.style.display = '';
       signinBtn.style.display = 'none';
     } else {
@@ -542,7 +690,7 @@
       await addDoc(collection(db, 'images'), {
         url:      data.secure_url,
         caption,
-        username: currentUser.displayName,
+        username: currentUser._displayName || currentUser.displayName,
         uid:      currentUser.uid,
         avatar:   currentUser.photoURL,
         createdAt: serverTimestamp()
@@ -701,7 +849,7 @@
         <div class="comment-form">
           <div class="commenter-info">
             <img src="${currentUser.photoURL}" referrerpolicy="no-referrer">
-            <span class="commenter-name">${esc(currentUser.displayName)}</span>
+            <span class="commenter-name">${esc(currentUser._displayName || currentUser.displayName)}</span>
           </div>
           <div class="form-row">
             <input class="field" type="text" id="text-${imageId}" placeholder="Write a comment...">
