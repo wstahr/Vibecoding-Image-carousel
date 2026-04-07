@@ -716,7 +716,8 @@
     snapshot.docChanges().forEach(change => {
       if (change.type === 'added') {
         slideCount++;
-        renderSlide(change.doc.id, change.doc.data(), slideCount);
+        // newIndex is the position in the ordered query result (0 = newest)
+        renderSlide(change.doc.id, change.doc.data(), slideCount, change.newIndex);
         emptyState.style.display = 'none';
       }
       if (change.type === 'removed') {
@@ -728,7 +729,7 @@
     counter.textContent = slideCount > 0 ? `${slideCount} image${slideCount !== 1 ? 's' : ''}` : '';
   });
 
-  function renderSlide(id, imgData, index) {
+  function renderSlide(id, imgData, index, newIndex = 0) {
     const ts = imgData.createdAt
       ? new Date(imgData.createdAt.seconds * 1000).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })
       : 'Just now';
@@ -774,8 +775,15 @@
       </div>
     `;
 
-    const firstSlide = feed.querySelector('.slide');
-    firstSlide ? feed.insertBefore(slide, firstSlide) : feed.appendChild(slide);
+    // Insert at the correct position to maintain newest-first order
+    const allSlides = feed.querySelectorAll('.slide');
+    if (allSlides.length === 0 || newIndex >= allSlides.length) {
+      // Append before empty state or at end
+      const empty = feed.querySelector('#empty-state');
+      empty ? feed.insertBefore(slide, empty) : feed.appendChild(slide);
+    } else {
+      feed.insertBefore(slide, allSlides[newIndex]);
+    }
 
     // Delete image
     slide.querySelector('.btn-delete-image').addEventListener('click', async () => {
