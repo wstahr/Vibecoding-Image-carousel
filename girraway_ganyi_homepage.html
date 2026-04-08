@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aboriginal Cultural Awareness & MHFA Training | Victoria — Girraway Ganyi Consultancy</title>
+<meta name="description" content="Aboriginal-owned consultancy in Victoria delivering cultural awareness training, Aboriginal MHFA, and workforce programs. Nationally endorsed. Enquire today.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --earth: #3a2a1e;
+    --earth-mid: #6b4c35;
+    --earth-light: #c4956a;
+    --sand: #f5efe6;
+    --sand-dark: #e8ddd0;
+    --sage: #4a6741;
+    --sage-light: #d6e8d0;
+    --ochre: #c17f3a;
+    --ochre-light: #f0dfc0;
+    --rust: #a8442a;
+    --rust-light: #f0d8d0;
+    --sky: #e8f0f5;
+    --text-main: #2a1e14;
+    --text-mid: #6b5040;
+    --text-light: #9a7d6a;
+    --page-bg: #f9f5f0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    color: var(--text-main);
+    background: var(--page-bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { text-decoration: none; color: inherit; }
+  img { max-width: 100%; display: block; }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--page-bg);
+    border-bottom: 0.5px solid rgba(58,42,30,0.12);
+    padding: 0 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .nav-logo { display: flex; align-items: center; gap: 10px; }
+
+  .nav-mark {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--ochre);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .nav-name {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18px; font-weight: 400;
+    color: var(--earth); letter-spacing: 0.02em;
+  }
+
+  .nav-links { display: flex; gap: 2.25rem; list-style: none; }
+
+  .nav-links a {
+    font-size: 13.5px; font-weight: 400;
+    color: var(--text-mid); letter-spacing: 0.01em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--earth); }
+
+  .nav-cta {
+    font-size: 13.5px; font-weight: 500;
+    color: white; background: var(--earth);
+    padding: 9px 22px; border-radius: 7px;
+    letter-spacing: 0.02em;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #5c3d28; }
+
+  .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+
+  /* ── UTILITIES ── */
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 2.5rem; }
+
+  .eyebrow {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .eyebrow-line { width: 32px; height: 1px; background: var(--ochre); flex-shrink: 0; }
+  .eyebrow-text {
+    font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ochre);
+    font-weight: 500;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 44px; font-weight: 300;
+    color: var(--earth); line-height: 1.15;
+  }
+
+  .section-sub {
+    font-size: 15.5px; color: var(--text-mid);
+    line-height: 1.75; max-width: 560px;
+    margin-top: .85rem;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    color: white; background: var(--earth);
+    padding: 13px 30px; border-radius: 8px;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: #5c3d28; transform: translateY(-1px); }
+
+  .btn-ghost {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 400;
+    color: var(--earth);
+    padding: 13px 22px; border-radius: 8px;
+    border: 0.5px solid rgba(58,42,30,0.3);
+    letter-spacing: 0.02em;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-ghost:hover { background: rgba(58,42,30,0.05); border-color: rgba(58,42,30,0.5); }
+
+  /* ── HERO ── */
+  .hero { padding: 5.5rem 2.5rem 5rem; }
+
+  .hero-inner {
+    max-width: 1160px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 430px;
+    gap: 4.5rem; align-items: center;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 62px; font-weight: 300;
+    line-height: 1.08; color: var(--earth);
+    letter-spacing: -0.01em; margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em { font-style: italic; color: var(--ochre); }
+
+  .hero-body {
+    font-size: 16.5px; line-height: 1.75;
+    color: var(--text-mid); max-width: 490px;
+    margin-bottom: 2.25rem;
+  }
+
+  .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+  .hero-card-main {
+    background: var(--earth); border-radius: 16px;
+    padding: 2rem 2rem 1.75rem; margin-bottom: 13px;
+  }
+
+  .hero-card-label {
+    font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--earth-light);
+    margin-bottom: 1rem;
+  }
+
+  .hero-card-quote {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 22px; font-weight: 300; font-style: italic;
+    line-height: 1.55; color: white; margin-bottom: 1.25rem;
+  }
+
+  .hero-card-attrib { font-size: 12px; color: var(--earth-light); }
+
+  .hero-cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+
+  .stat-card {
+    background: var(--ochre-light); border-radius: 13px;
+    padding: 1.25rem 1.25rem 1.4rem;
+  }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 38px; font-weight: 400; color: var(--earth); line-height: 1;
+  }
+
+  .stat-label { font-size: 12px; color: var(--earth-mid); margin-top: 5px; line-height: 1.45; }
+
+  .endorsement-card {
+    background: var(--sage-light); border-radius: 13px;
+    padding: 1.25rem; display: flex;
+    flex-direction: column; justify-content: space-between;
+  }
+
+  .endorsement-label {
+    font-size: 11px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--sage);
+    font-weight: 500; margin-bottom: 10px;
+  }
+
+  .endorsement-logos { display: flex; flex-direction: column; gap: 5px; }
+  .endorsement-logos span { font-size: 12.5px; color: #2d5232; font-weight: 400; }
+
+  /* ── ACKNOWLEDGMENT ── */
+  .acknowledgment {
+    background: var(--earth); padding: 2.75rem 3rem;
+    display: flex; align-items: center; gap: 2rem;
+  }
+
+  .ack-icon { width: 50px; height: 50px; flex-shrink: 0; }
+
+  .ack-text {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 17px; font-style: italic; font-weight: 300;
+    color: rgba(255,255,255,0.85); line-height: 1.75;
+  }
+
+  /* ── SERVICES ── */
+  .services { padding: 5.5rem 2.5rem; }
+
+  .section-header { margin-bottom: 3.25rem; }
+
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 18px;
+  }
+
+  .service-card {
+    background: white;
+    border: 0.5px solid rgba(58,42,30,0.1);
+    border-radius: 15px; padding: 1.85rem;
+    transition: border-color .25s, transform .2s;
+  }
+  .service-card:hover { border-color: rgba(58,42,30,0.28); transform: translateY(-2px); }
+
+  .service-icon {
+    width: 42px; height: 42px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.1rem;
+  }
+
+  .service-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 21px; font-weight: 400; color: var(--earth);
+    margin-bottom: .5rem; line-height: 1.3;
+  }
+
+  .service-desc { font-size: 13.5px; color: var(--text-mid); line-height: 1.65; }
+
+  .service-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12.5px; color: var(--ochre); font-weight: 500;
+    margin-top: 1.1rem; letter-spacing: 0.02em;
+    transition: gap 0.2s;
+  }
+  .service-link:hover { gap: 7px; }
+
+  /* ── DIVIDER ── */
+  .divider-section { background: var(--sand); padding: 5rem 2.5rem; }
+
+  .divider-inner {
+    max-width: 1160px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center;
+  }
+
+  .divider-quote {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 36px; font-weight: 300; font-style: italic;
+    color: var(--earth); line-height: 1.4;
+  }
+
+  .divider-quote em { color: var(--ochre); font-style: normal; }
+
+  .divider-body { font-size: 15.5px; color: var(--text-mid); line-height: 1.8; }
+
+  .stats-row { display: flex; gap: 2.5rem; margin-top: 2rem; flex-wrap: wrap; }
+
+  .stat-item-num {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 32px; font-weight: 400; color: var(--earth); line-height: 1;
+  }
+  .stat-item-label { font-size: 12px; color: var(--text-mid); margin-top: 4px; }
+
+  /* ── TEAM ── */
+  .team-section { padding: 5.5rem 2.5rem; }
+
+  .team-grid {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 20px; margin-top: 2.75rem;
+  }
+
+  .team-card { text-align: center; }
+
+  .team-avatar {
+    width: 84px; height: 84px; border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 24px; font-weight: 400; color: white;
+  }
+
+  .team-name {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 17px; font-weight: 400; color: var(--earth);
+    margin-bottom: 4px;
+  }
+
+  .team-role { font-size: 12px; color: var(--text-light); line-height: 1.4; }
+
+  /* ── AWARDS ── */
+  .awards-band { background: var(--earth); padding: 3.25rem 3rem; }
+
+  .awards-label {
+    font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--earth-light);
+    margin-bottom: 1.5rem;
+  }
+
+  .awards-row { display: flex; gap: 2.5rem; flex-wrap: wrap; align-items: flex-start; }
+
+  .award-item { display: flex; align-items: flex-start; gap: 11px; max-width: 340px; }
+
+  .award-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ochre); flex-shrink: 0; margin-top: 5px;
+  }
+
+  .award-text {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16.5px; font-weight: 300; color: rgba(255,255,255,0.88);
+    line-height: 1.55;
+  }
+
+  /* ── CTA ── */
+  .cta-section { background: var(--sand); padding: 6rem 2.5rem; text-align: center; }
+
+  .cta-inner { max-width: 620px; margin: 0 auto; }
+
+  .cta-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 48px; font-weight: 300; color: var(--earth);
+    line-height: 1.18; margin-bottom: 1.25rem;
+  }
+
+  .cta-body { font-size: 15.5px; color: var(--text-mid); line-height: 1.8; margin-bottom: 2.25rem; }
+
+  .cta-actions { display: flex; gap: 13px; justify-content: center; flex-wrap: wrap; }
+
+  .cta-contact { font-size: 13px; color: var(--text-light); margin-top: 1.5rem; }
+  .cta-contact a { color: var(--ochre); transition: opacity .2s; }
+  .cta-contact a:hover { opacity: .75; }
+
+  /* ── FOOTER ── */
+  footer { background: var(--earth); padding: 3.5rem 3rem 2.25rem; }
+
+  .footer-top {
+    display: grid; grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 3.5rem; padding-bottom: 2rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.1);
+    margin-bottom: 1.75rem;
+  }
+
+  .footer-brand .nav-name { color: rgba(255,255,255,0.9); }
+
+  .footer-tagline { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: .6rem; line-height: 1.65; }
+
+  .footer-col h4 {
+    font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--earth-light);
+    margin-bottom: 1.1rem; font-weight: 500;
+  }
+
+  .footer-col ul { list-style: none; }
+
+  .footer-col ul li {
+    font-size: 13px; color: rgba(255,255,255,0.55);
+    margin-bottom: .55rem; line-height: 1.5;
+  }
+
+  .footer-col ul li.highlight { color: var(--earth-light); }
+
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 8px;
+  }
+
+  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.3); }
+  .footer-url { font-size: 12px; color: rgba(255,255,255,0.35); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity .65s ease, transform .65s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .hero h1 { font-size: 48px; }
+    .section-title { font-size: 36px; }
+    .services-grid { grid-template-columns: 1fr 1fr; }
+    .divider-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+    .team-grid { grid-template-columns: repeat(2,1fr); }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .footer-top > div:first-child { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 620px) {
+    nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+    .hero { padding: 3.5rem 1.25rem 3rem; }
+    .hero h1 { font-size: 38px; }
+    .hero-inner { padding: 0; }
+    .services { padding: 3.5rem 1.25rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .divider-section, .team-section, .cta-section { padding: 3.5rem 1.25rem; }
+    .acknowledgment { padding: 2rem 1.25rem; flex-direction: column; gap: 1rem; }
+    .awards-band { padding: 2.25rem 1.25rem; }
+    .awards-row { flex-direction: column; gap: 1.25rem; }
+    footer { padding: 2.5rem 1.25rem 1.75rem; }
+    .footer-top { grid-template-columns: 1fr; gap: 1.75rem; }
+    .cta-title { font-size: 36px; }
+    .team-grid { grid-template-columns: repeat(2,1fr); gap: 1.25rem; }
+    .hero-cards-row { grid-template-columns: 1fr; }
+    .container { padding: 0 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav role="navigation" aria-label="Main navigation">
+  <div class="nav-logo">
+    <div class="nav-mark" aria-hidden="true">
+      <svg viewBox="0 0 18 18" width="20" height="20" fill="none" aria-hidden="true">
+        <circle cx="9" cy="5.5" r="2.8" fill="white"/>
+        <path d="M3 16c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="nav-name">Girraway Ganyi</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#team">Our team</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="https://www.girrawayganyi.com.au/blog">Blog</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Enquire now</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">
+        <div class="eyebrow-line" aria-hidden="true"></div>
+        <span class="eyebrow-text">Aboriginal owned &amp; operated &nbsp;·&nbsp; Victoria, Australia</span>
+      </div>
+      <h1 id="hero-heading">
+        Cultural awareness<br>
+        that <em>transforms</em><br>
+        how you work
+      </h1>
+      <p class="hero-body">
+        Girraway Ganyi Consultancy delivers nationally endorsed Aboriginal cultural awareness training, Mental Health First Aid, and cultural mentoring — tailored to your organisation, delivered with lived experience.
+      </p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Enquire about training</a>
+        <a href="#services" class="btn-ghost">View all services</a>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="hero-card-main" role="blockquote">
+        <div class="hero-card-label">What participants say</div>
+        <p class="hero-card-quote">"A genuine understanding of the content — and the ability to create a truly safe space for learning."</p>
+        <p class="hero-card-attrib">Cultural awareness participant, 2024</p>
+      </div>
+      <div class="hero-cards-row">
+        <div class="stat-card">
+          <div class="stat-num">15+</div>
+          <div class="stat-label">Workshop formats across health, education &amp; government</div>
+        </div>
+        <div class="endorsement-card">
+          <div class="endorsement-label">Nationally endorsed by</div>
+          <div class="endorsement-logos">
+            <span>ACWA</span>
+            <span>RACGP</span>
+            <span>Midwives Australia</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACKNOWLEDGMENT -->
+<div class="acknowledgment" role="note" aria-label="Acknowledgment of Country">
+  <svg class="ack-icon" viewBox="0 0 50 50" fill="none" aria-hidden="true">
+    <circle cx="25" cy="25" r="23" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <circle cx="25" cy="25" r="8" fill="rgba(193,127,58,0.55)"/>
+    <circle cx="25" cy="9"  r="3.2" fill="rgba(193,127,58,0.38)"/>
+    <circle cx="25" cy="41" r="3.2" fill="rgba(193,127,58,0.38)"/>
+    <circle cx="9"  cy="25" r="3.2" fill="rgba(193,127,58,0.38)"/>
+    <circle cx="41" cy="25" r="3.2" fill="rgba(193,127,58,0.38)"/>
+    <circle cx="14" cy="14" r="2.2" fill="rgba(193,127,58,0.25)"/>
+    <circle cx="36" cy="14" r="2.2" fill="rgba(193,127,58,0.25)"/>
+    <circle cx="14" cy="36" r="2.2" fill="rgba(193,127,58,0.25)"/>
+    <circle cx="36" cy="36" r="2.2" fill="rgba(193,127,58,0.25)"/>
+  </svg>
+  <p class="ack-text">Girraway Ganyi Consultancy acknowledges the traditional owners of the lands on which all training and service delivery occurs, and pays respect to the Elders, past and present, and the emerging leaders.</p>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services" aria-labelledby="services-heading">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="eyebrow">
+        <div class="eyebrow-line" aria-hidden="true"></div>
+        <span class="eyebrow-text">Our services</span>
+      </div>
+      <h2 class="section-title" id="services-heading">Training shaped around<br>your organisation's needs</h2>
+      <p class="section-sub">All workshops are tailored to suit the sector, audience, and goals of your team — from two-hour introductions to multi-day accredited programs.</p>
+    </div>
+
+    <div class="services-grid">
+      <article class="service-card reveal">
+        <div class="service-icon" style="background:var(--ochre-light)">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="6.5" r="3" fill="#854F0B"/>
+            <path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#854F0B" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="service-title">Aboriginal cultural awareness</h3>
+        <p class="service-desc">From two-hour introductions to sector-specific full-day workshops — healthcare, education, legal, early childhood, councils, and more. Nationally endorsed by ACWA, RACGP, and Midwives Australia.</p>
+        <a href="https://www.girrawayganyi.com.au/aboriginal-cultural-awareness" class="service-link">Explore workshops &rarr;</a>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-icon" style="background:var(--rust-light)">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M10 3v14M3 10h14" stroke="#712B13" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="10" cy="10" r="7" stroke="#712B13" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <h3 class="service-title">Mental Health First Aid (MHFA)</h3>
+        <p class="service-desc">Nationally accredited Aboriginal MHFA training — delivered by a licensed Aboriginal instructor, culturally appropriate and effective, with accreditation valid for three years.</p>
+        <a href="https://www.girrawayganyi.com.au/mental-health-first-aid-mhfa" class="service-link">View MHFA programs &rarr;</a>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-icon" style="background:var(--sage-light)">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M5 10c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5" stroke="#27500A" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <circle cx="10" cy="10" r="2" fill="#27500A"/>
+          </svg>
+        </div>
+        <h3 class="service-title">Cultural mentoring &amp; supervision</h3>
+        <p class="service-desc">Ongoing support for individuals and teams navigating complex cultural responsibilities — sustained, reflective, and firmly grounded in lived experience and practice.</p>
+        <a href="https://www.girrawayganyi.com.au/cultural-mentoring-supervision" class="service-link">Learn more &rarr;</a>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-icon" style="background:var(--sky)">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="3" y="5" width="14" height="10" rx="2" stroke="#0C447C" stroke-width="1" fill="none"/>
+            <path d="M7 9h6M7 12h4" stroke="#0C447C" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="service-title">School &amp; TAFE programs</h3>
+        <p class="service-desc">Purpose-built programs for educational settings — building genuine cultural capability in students and staff from an early stage, with content tailored to the learning environment.</p>
+        <a href="https://www.girrawayganyi.com.au/school-tafe-based-programs" class="service-link">View programs &rarr;</a>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-icon" style="background:var(--ochre-light)">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M3 8l7-5 7 5v9H3V8z" stroke="#854F0B" stroke-width="1" fill="none"/>
+            <rect x="8" y="12" width="4" height="5" rx="0.5" stroke="#854F0B" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <h3 class="service-title">Workforce programs</h3>
+        <p class="service-desc">Long-form capability building for organisations committed to sustainable, culturally safe workplace practices — including Indigenous employment strategies and reconciliation support.</p>
+        <a href="https://www.girrawayganyi.com.au/workforce-programs" class="service-link">Explore &rarr;</a>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-icon" style="background:var(--rust-light)">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M10 3c-1.7 0-3 1.3-3 3 0 1.2.7 2.3 1.8 2.8L8 17h4l-.8-8.2C12.3 8.3 13 7.2 13 6c0-1.7-1.3-3-3-3z" stroke="#712B13" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <h3 class="service-title">Consultation</h3>
+        <p class="service-desc">Strategic guidance on Indigenous engagement, reconciliation action plans, policy development, and culturally informed service delivery. We meet you where you are.</p>
+        <a href="https://www.girrawayganyi.com.au/consultation" class="service-link">Talk to us &rarr;</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER QUOTE -->
+<section class="divider-section" aria-label="About our approach">
+  <div class="divider-inner reveal">
+    <blockquote class="divider-quote">
+      "All activities are tailored to suit the needs of <em>your</em> organisation — not a one-size-fits-all approach."
+    </blockquote>
+    <div>
+      <p class="divider-body">Girraway Ganyi is an Aboriginal-owned consultancy with deep roots in community. Our training goes beyond compliance — it builds the real cultural capability that changes how your team thinks, communicates, and works alongside Aboriginal and Torres Strait Islander people.</p>
+      <div class="stats-row">
+        <div>
+          <div class="stat-item-num">5+</div>
+          <div class="stat-item-label">Years delivering nationally</div>
+        </div>
+        <div>
+          <div class="stat-item-num">3</div>
+          <div class="stat-item-label">National endorsing bodies</div>
+        </div>
+        <div>
+          <div class="stat-item-num">9</div>
+          <div class="stat-item-label">Team members across Victoria</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team-section" id="team" aria-labelledby="team-heading">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="eyebrow">
+        <div class="eyebrow-line" aria-hidden="true"></div>
+        <span class="eyebrow-text">Our team</span>
+      </div>
+      <h2 class="section-title" id="team-heading">Led by community,<br>grounded in experience</h2>
+      <p class="section-sub">Every member of the Girraway Ganyi team brings lived experience and professional expertise to the work — creating learning environments where people feel genuinely safe.</p>
+    </div>
+
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background:var(--earth)">AJ</div>
+        <div class="team-name">AJ Williams-Tchen</div>
+        <div class="team-role">Director &amp; Lead Consultant</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background:var(--sage)">AT</div>
+        <div class="team-name">Ash Tchen</div>
+        <div class="team-role">Mentor &amp; Trainer</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background:var(--ochre)">KE</div>
+        <div class="team-name">Kara Eddington</div>
+        <div class="team-role">Mentor &amp; Trainer</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background:var(--rust)">LS</div>
+        <div class="team-name">Leanne Sumner</div>
+        <div class="team-role">Cultural Support &amp; Adviser</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background:#5c3d28">ED</div>
+        <div class="team-name">Dr Elizabeth Dale</div>
+        <div class="team-role">Cultural Mentor</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background:#3b5c36">FS</div>
+        <div class="team-name">Fiona Sheppeard</div>
+        <div class="team-role">Cultural Mentor / EAP Support</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background:#7a4020">YT</div>
+        <div class="team-name">Yaleela Torrens</div>
+        <div class="team-role">Cultural Mentor / EAP Support</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background:#6b4c35">WF</div>
+        <div class="team-name">Willa Farmer</div>
+        <div class="team-role">Training Consultant</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AWARDS -->
+<div class="awards-band" id="achievements" role="region" aria-label="Awards and recognition">
+  <div style="max-width:1160px;margin:0 auto">
+    <div class="awards-label">Recognition &amp; achievements</div>
+    <div class="awards-row">
+      <div class="award-item">
+        <div class="award-dot" aria-hidden="true"></div>
+        <span class="award-text">All First Nations Award 2025 &mdash; Health and Wellbeing</span>
+      </div>
+      <div class="award-item">
+        <div class="award-dot" aria-hidden="true"></div>
+        <span class="award-text">AJ Williams-Tchen &mdash; Outstanding Business Person of the Year 2025, East Melbourne Business Awards</span>
+      </div>
+      <div class="award-item">
+        <div class="award-dot" aria-hidden="true"></div>
+        <span class="award-text">Finalist &mdash; 25th Anniversary Awards, University of Wollongong 2025</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section" id="contact" aria-labelledby="cta-heading">
+  <div class="cta-inner reveal">
+    <div class="eyebrow" style="justify-content:center">
+      <div class="eyebrow-line" aria-hidden="true"></div>
+      <span class="eyebrow-text">Get in touch</span>
+    </div>
+    <h2 class="cta-title" id="cta-heading">Ready to build genuine cultural capability?</h2>
+    <p class="cta-body">Whether you're planning a one-off workshop or a long-term workforce program, we'd love to understand your needs and shape something that works for your team.</p>
+    <div class="cta-actions">
+      <a href="mailto:girrawayganyi@gmail.com" class="btn-primary">Enquire about training</a>
+      <a href="https://www.girrawayganyi.com.au/contact" class="btn-ghost">View contact page</a>
+    </div>
+    <p class="cta-contact">Or reach us directly: <a href="mailto:girrawayganyi@gmail.com">girrawayganyi@gmail.com</a> &nbsp;&middot;&nbsp; <a href="tel:0409926689">0409 926 689</a></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="nav-logo" style="margin-bottom:.8rem">
+        <div class="nav-mark" aria-hidden="true">
+          <svg viewBox="0 0 18 18" width="20" height="20" fill="none">
+            <circle cx="9" cy="5.5" r="2.8" fill="white"/>
+            <path d="M3 16c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="nav-name">Girraway Ganyi</span>
+      </div>
+      <p class="footer-tagline">Aboriginal-owned cultural awareness and mental health training &mdash; Victoria, Australia.<br>Inspiring individuals, communities, and organisations to work more effectively in the Indigenous space.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="https://www.girrawayganyi.com.au/aboriginal-cultural-awareness">Aboriginal cultural awareness</a></li>
+        <li><a href="https://www.girrawayganyi.com.au/mental-health-first-aid-mhfa">Mental Health First Aid</a></li>
+        <li><a href="https://www.girrawayganyi.com.au/cultural-mentoring-supervision">Cultural mentoring</a></li>
+        <li><a href="https://www.girrawayganyi.com.au/school-tafe-based-programs">School &amp; TAFE programs</a></li>
+        <li><a href="https://www.girrawayganyi.com.au/workforce-programs">Workforce programs</a></li>
+        <li><a href="https://www.girrawayganyi.com.au/consultation">Consultation</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li>PO Box 239, Balwyn VIC 3103</li>
+        <li class="highlight"><a href="mailto:girrawayganyi@gmail.com" style="color:var(--earth-light)">girrawayganyi@gmail.com</a></li>
+        <li><a href="tel:0409926689" style="color:rgba(255,255,255,0.55)">0409 926 689</a></li>
+        <li style="margin-top:.75rem"><a href="https://www.facebook.com/GirrawayGanyiConsultancy" style="color:rgba(255,255,255,0.45)">Facebook</a></li>
+        <li><a href="https://www.linkedin.com/company/girraway-ganyi-consultancy-pty-ltd/" style="color:rgba(255,255,255,0.45)">LinkedIn</a></li>
+        <li><a href="https://www.youtube.com/channel/UCQ--N9r7-SxvArqLA_qs8tg" style="color:rgba(255,255,255,0.45)">YouTube</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2021&ndash;2026 Girraway Ganyi Consultancy Pty Ltd. All rights reserved.</span>
+    <span class="footer-url">girrawayganyi.com.au</span>
+  </div>
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
